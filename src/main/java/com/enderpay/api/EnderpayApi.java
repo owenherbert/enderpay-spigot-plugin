@@ -33,51 +33,42 @@ public class EnderpayApi {
 
     }
 
-    public JSONObject makeRequest(String endpoint, String method, JSONObject requestBody) {
+    public JSONObject makeRequest(String endpoint, String method, JSONObject requestBody) throws IOException {
 
-        try {
+        URL url = new URL(buildPath(endpoint));
 
-            URL url = new URL(buildPath(endpoint));
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        httpURLConnection.setRequestProperty("Accept", "*/*");
 
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestProperty("Accept", "*/*");
+        // add headers
+        httpURLConnection.setRequestProperty("Content-Type", "application/json");
+        httpURLConnection.setRequestProperty(HEADER_API_KEY, this.apiKey);
+        httpURLConnection.setRequestProperty(HEADER_API_SECRET, this.apiSecret);
+        httpURLConnection.setRequestMethod(method);
 
-            // add headers
-            httpURLConnection.setRequestProperty("Content-Type", "application/json");
-            httpURLConnection.setRequestProperty(HEADER_API_KEY, this.apiKey);
-            httpURLConnection.setRequestProperty(HEADER_API_SECRET, this.apiSecret);
-            httpURLConnection.setRequestMethod(method);
+        if (method == METHOD_PUT) {
+            httpURLConnection.setDoOutput(true);
 
-            if (method == METHOD_PUT) {
-                httpURLConnection.setDoOutput(true);
-
-                try (DataOutputStream dataOutputStream = new DataOutputStream( httpURLConnection.getOutputStream())) {
-                    dataOutputStream.write(requestBody.toString().getBytes());
-                }
-
+            try (DataOutputStream dataOutputStream = new DataOutputStream( httpURLConnection.getOutputStream())) {
+                dataOutputStream.write(requestBody.toString().getBytes());
             }
 
-            InputStream inputStream = httpURLConnection.getInputStream();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-
-            StringBuilder responseBody = new StringBuilder();
-            String currentLine;
-
-            while ((currentLine = in.readLine()) != null) responseBody.append(currentLine);
-
-            in.close();
-
-            httpURLConnection.disconnect();
-
-            return new JSONObject(responseBody.toString());
-
-        } catch (IOException exception) {
-            // inform console/ops of API error if one occurs
-            MessageBroadcaster.toConsole("An error occurred while communicating with the API: " + exception.getMessage());
         }
 
-        return null;
+        InputStream inputStream = httpURLConnection.getInputStream();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+
+        StringBuilder responseBody = new StringBuilder();
+        String currentLine;
+
+        while ((currentLine = in.readLine()) != null) responseBody.append(currentLine);
+
+        in.close();
+
+        httpURLConnection.disconnect();
+
+        return new JSONObject(responseBody.toString());
     }
 
     private static String buildPath(String endpoint) {

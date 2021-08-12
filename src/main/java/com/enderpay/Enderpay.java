@@ -116,7 +116,7 @@ public class Enderpay {
                                 player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + Enderpay.getStore().getName());
                                 player.sendMessage("");
                                 player.sendMessage(ChatColor.GRAY + "We tried adding items to your inventory but you don't ");
-                                player.sendMessage(ChatColor.GRAY + "have enough space. Please clear " + ChatColor.LIGHT_PURPLE + requiredSlots + ChatColor.GRAY + " slots. And we'll try");
+                                player.sendMessage(ChatColor.GRAY + "have enough space. Please clear " + ChatColor.LIGHT_PURPLE + requiredSlots + ChatColor.GRAY + " slots, and we'll try");
                                 player.sendMessage(ChatColor.GRAY + "again shortly.");
                                 player.sendMessage("");
 

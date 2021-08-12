@@ -156,7 +156,7 @@ public class Enderpay {
         } catch (IOException exception) {
             MessageBroadcaster.toConsole("An error occurred while communicating with the Enderpay API: " + exception.getMessage());
         } catch (Exception exception) {
-            MessageBroadcaster.toConsole("An error occurred while trying to check for pending commands");
+            MessageBroadcaster.toConsole("An error occurred while trying to check for pending commands.");
         }
 
     }

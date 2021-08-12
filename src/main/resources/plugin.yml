@@ -1,0 +1,14 @@
+name: Enderpay
+version: ${project.version}
+main: com.enderpay.Plugin
+api-version: 1.17
+description: Minecraft plugin for Enderpay
+website: https://enderpay.com
+commands:
+  setup:
+    description: Setup the API credentials
+    usage: /<command> <api-key> <api-secret>
+    permission: enderpay.admin
+  buy:
+    description: Open the server buy menu
+    usage: /buy

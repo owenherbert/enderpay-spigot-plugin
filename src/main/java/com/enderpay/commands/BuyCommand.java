@@ -26,8 +26,8 @@ public class BuyCommand implements CommandExecutor {
                 player.sendMessage("");
                 player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Enderpay");
                 player.sendMessage("");
-                player.sendMessage(ChatColor.GRAY + "The buy menu cannot be opened because the server has not loaded");
-                player.sendMessage(ChatColor.GRAY + "data from Enderpay. Please try again soon.");
+                player.sendMessage(ChatColor.GRAY + "The buy menu cannot be opened because the server has");
+                player.sendMessage(ChatColor.GRAY + "not loaded data from Enderpay. Please try again soon.");
                 player.sendMessage("");
             }
         }

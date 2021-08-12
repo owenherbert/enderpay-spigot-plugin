@@ -22,8 +22,8 @@ public class EnderpayApi {
     public static String HEADER_API_KEY = "X-Enderpay-Api-Key";
     public static String HEADER_API_SECRET = "X-Enderpay-Api-Secret";
 
-    private String apiKey;
-    private String apiSecret;
+    private final String apiKey;
+    private final String apiSecret;
 
     public EnderpayApi() {
 

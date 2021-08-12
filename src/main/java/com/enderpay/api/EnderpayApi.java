@@ -1,7 +1,6 @@
 package com.enderpay.api;
 
 import com.enderpay.Enderpay;
-import com.enderpay.MessageBroadcaster;
 import org.json.JSONObject;
 
 import java.io.*;

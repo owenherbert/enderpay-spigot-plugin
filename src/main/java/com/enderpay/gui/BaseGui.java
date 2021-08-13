@@ -40,7 +40,7 @@ public abstract class BaseGui {
         final ItemMeta meta = item.getItemMeta();
 
         // Set the name of the item
-        String displayName = ChatColor.RESET + "" + ChatColor.WHITE + "" + replaceAndColours(name);
+        String displayName = replaceAndColours(name);
         if (displayClickInName) displayName += "" + ChatColor.GRAY + " (Click to view)";
 
         meta.setDisplayName(displayName);

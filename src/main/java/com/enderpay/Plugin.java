@@ -1,7 +1,6 @@
 package com.enderpay;
 
-import com.enderpay.commands.BuyCommand;
-import com.enderpay.commands.SetupCommand;
+import com.enderpay.commands.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,7 +22,10 @@ public final class Plugin extends JavaPlugin {
         config = YamlConfiguration.loadConfiguration(fileConfig);
 
         // register commands
-        this.getCommand("setup").setExecutor(new SetupCommand());
+        this.getCommand("enderpay-setup").setExecutor(new SetupCommand());
+        this.getCommand("enderpay-sync").setExecutor(new SyncCommand());
+        this.getCommand("enderpay-force").setExecutor(new ForceCommand());
+        this.getCommand("enderpay-help").setExecutor(new HelpCommand());
         this.getCommand("buy").setExecutor(new BuyCommand());
 
         // set scheduler

@@ -5,10 +5,22 @@ api-version: 1.17
 description: Minecraft plugin for Enderpay
 website: https://enderpay.com
 commands:
-  setup:
-    description: Setup the API credentials
+  enderpay-setup:
+    description: Setup API credentials
     usage: /<command> <api-key> <api-secret>
     permission: enderpay.admin
+  enderpay-force:
+    description: Check for new commands
+    usage: /<command> force
+    permission: enderpay.admin
   buy:
-    description: Open the server buy menu
-    usage: /buy
+    description: Open server buy menu
+    usage: /<command>
+  enderpay-sync:
+    description: Sync latest changes
+    usage: /<command> sync
+    permission: enderpay.admin
+  enderpay-help:
+    description: Get plugin related help
+    usage: /<command> help
+    permission: enderpay.admin

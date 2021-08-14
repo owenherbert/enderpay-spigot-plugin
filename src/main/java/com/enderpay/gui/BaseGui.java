@@ -36,25 +36,29 @@ public abstract class BaseGui {
             newLore[i] = replaceAndColours(loreLine);
         }
 
-        final ItemStack item = new ItemStack(material, 1);
+        final ItemStack item = new ItemStack(material, quantity);
         final ItemMeta meta = item.getItemMeta();
 
-        // Set the name of the item
-        String displayName = replaceAndColours(name);
-        if (displayClickInName) displayName += "" + ChatColor.GRAY + " (Click to view)";
+        // if there is meta
+        if (meta != null) {
 
-        meta.setDisplayName(displayName);
-        item.setAmount(quantity);
+            // Set the name of the item
+            String displayName = replaceAndColours(name);
+            if (displayClickInName) displayName += "" + ChatColor.GRAY + " (Click)";
 
-        // Set the lore of the item
-        if (!emptyLore) meta.setLore(Arrays.asList(newLore));
+            meta.setDisplayName(displayName);
 
-        // add enchantment
-        if (isEnchanted) {
-            meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+            // Set the lore of the item
+            if (!emptyLore) meta.setLore(Arrays.asList(newLore));
+
+            // add enchantment
+            if (isEnchanted) {
+                meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+            }
+
+            item.setItemMeta(meta);
+
         }
-
-        item.setItemMeta(meta);
 
         return item;
     }

@@ -1,5 +1,6 @@
 package com.enderpay.commands;
 
+import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,11 +18,12 @@ public class BuyCommand implements CommandExecutor {
         // check if models have been loaded from the API
         if (sender instanceof HumanEntity) {
 
+            Player player = (Player) sender;
+
             if (Enderpay.isLoaded()) {
                 Enderpay.getHomeGui().openInventory((HumanEntity) sender);
+                XSound.play(player, "ORB_PICKUP");
             } else {
-
-                Player player = (Player) sender;
 
                 player.sendMessage("");
                 player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Enderpay");

@@ -1,11 +1,11 @@
 package com.enderpay.gui;
 
+import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import com.enderpay.model.Page;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,8 +70,11 @@ public class PageGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
 
+            Material material = Material.getMaterial("GRAY_STAINED_GLASS_PANE");
+            if (material == null) material = Material.AIR;
+
             inventory.setItem(itemIndex, createGuiItem(
-                    Material.GRAY_STAINED_GLASS_PANE,
+                    material,
                     "",
                     1,
                     false,
@@ -95,38 +98,39 @@ public class PageGui extends BaseGui implements Listener {
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event) {
 
-        if (event.getInventory() != inventory) return;
+        if (event.getInventory().equals(inventory)) {
 
-        event.setCancelled(true);
+            event.setCancelled(true);
 
-        final ItemStack clickedItem = event.getCurrentItem();
+            final ItemStack clickedItem = event.getCurrentItem();
 
-        // verify current item is not null
-        if (clickedItem == null || clickedItem.getType().isAir()) return;
+            // verify current item is not null
+            if (clickedItem == null) return;
 
-        int slotIndex = event.getRawSlot();
+            int slotIndex = event.getRawSlot();
 
-        final Player player = (Player) event.getWhoClicked();
+            final Player player = (Player) event.getWhoClicked();
 
-        player.playSound(player.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 1);
+            XSound.play(player, "CHICKEN_EGG_POP");
 
-        // show the home GUI to the player
-        if (slotIndex == backSlotIndex) {
-            Enderpay.getHomeGui().openInventory(player);
-            return;
-        }
+            // show the home GUI to the player
+            if (slotIndex == backSlotIndex) {
+                Enderpay.getHomeGui().openInventory(player);
+                return;
+            }
 
-        if (slotIndex < pages.size()) {
-            Page clickedPage = pages.get(slotIndex);
+            if (slotIndex < pages.size()) {
+                Page clickedPage = pages.get(slotIndex);
 
-            player.closeInventory();
-            player.sendMessage("");
-            player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + Enderpay.getStore().getName());
-            player.sendMessage("");
-            player.sendMessage(ChatColor.GRAY + "Click the link below to view the " + ChatColor.LIGHT_PURPLE + clickedPage.getName() + ChatColor.GRAY + " page!");
-            player.sendMessage("");
-            player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.UNDERLINE + clickedPage.getLink());
-            player.sendMessage("");
+                player.closeInventory();
+                player.sendMessage("");
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + Enderpay.getStore().getName());
+                player.sendMessage("");
+                player.sendMessage(ChatColor.GRAY + "Click the link below to view the " + ChatColor.LIGHT_PURPLE + clickedPage.getName() + ChatColor.GRAY + " page!");
+                player.sendMessage("");
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.UNDERLINE + clickedPage.getLink());
+                player.sendMessage("");
+            }
         }
     }
 

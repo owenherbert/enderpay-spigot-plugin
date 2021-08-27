@@ -17,9 +17,9 @@ public class EnderpayApi {
     public static String API_DOMAIN = "https://api.enderpay.com";
     public static int API_VERSION = 1;
 
-    public static String ENDPOINT_PLUGIN_LISTING_GET = "plugin/listing";
-    public static String ENDPOINT_PLUGIN_STORE_GET = "plugin/store";
-    public static String ENDPOINT_PLUGIN_COMMAND_QUEUE = "plugin/queue";
+    public static String ENDPOINT_PLUGIN_LISTING_GET = "plugin/listing"; // the listing endpoint
+    public static String ENDPOINT_PLUGIN_STORE_GET = "plugin/store"; // the store endpoint
+    public static String ENDPOINT_PLUGIN_COMMAND_QUEUE = "plugin/queue"; // the queue endpoint
 
     public static String METHOD_GET = "GET";
     public static String METHOD_PUT = "PUT";
@@ -30,6 +30,7 @@ public class EnderpayApi {
     public void makeRequestAsync(final String endpoint, final String method, final JSONObject requestBody,
                                         final ApiResponseCallback apiResponseCallback) {
 
+        // run API calls asynchronously to avoid server lag
         Bukkit.getScheduler().runTaskAsynchronously(Enderpay.getPlugin(), () -> {
 
             try {
@@ -74,8 +75,8 @@ public class EnderpayApi {
 
     }
 
+    // builds the API endpoint based on the domain, version, and specified endpoint.
     private static String buildPath(String endpoint) {
-
         return API_DOMAIN + "/v" + API_VERSION + "/" + endpoint;
     }
 }

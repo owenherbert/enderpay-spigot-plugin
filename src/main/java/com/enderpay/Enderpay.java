@@ -371,7 +371,10 @@ public class Enderpay {
 
                     // register Placeholder API expansion
                     if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                        new EnderpayExpansion(plugin).register();
+
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(Enderpay.getPlugin(), () -> {
+                            new EnderpayExpansion(plugin).register();
+                        });
                     }
 
                     donatorsGui = new DonatorsGui();

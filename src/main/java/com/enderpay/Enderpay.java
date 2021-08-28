@@ -23,6 +23,8 @@ import java.util.UUID;
 
 public class Enderpay {
 
+    public static final String DEFAULT_PLACEHOLDER = "N/A";
+
     private static Plugin plugin; // the plugin
 
     private static HomeGui homeGui; // the home GUI
@@ -39,24 +41,24 @@ public class Enderpay {
     private static Currency currency; // the currency model
 
     // donator usernames
-    private static String latestDonatorUsername = ""; // the username of the latest donator
-    private static String firstPlaceDonatorUsername = ""; // the username of the donator in first place
-    private static String secondPlaceDonatorUsername = ""; // the username of the donator in second place
-    private static String thirdPlaceDonatorUsername = ""; // the username of the donator in third place
-    private static String dayDonatorUsername = ""; // the username of the donator that has donated the most today
-    private static String weekDonatorUsername = ""; // the username of the donator that has donated the most this week
-    private static String monthDonatorUsername = ""; // the username of the donator that has donated the most this month
+    private static String latestDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the latest donator
+    private static String firstPlaceDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the donator in first place
+    private static String secondPlaceDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the donator in second place
+    private static String thirdPlaceDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the donator in third place
+    private static String dayDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the donator that has donated the most today
+    private static String weekDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the donator that has donated the most this week
+    private static String monthDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the donator that has donated the most this month
 
     private static String firstPlaceDonatorUuid = ""; // the uuid of the donator in first place
     private static String secondPlaceDonatorUuid = ""; // the uuid of the donator in second place
     private static String thirdPlaceDonatorUuid = ""; // the uuid of the donator in third place
 
-    private static String firstPlaceDonatorAmount = "";
-    private static String secondPlaceDonatorAmount = "";
-    private static String thirdPlaceDonatorAmount = "";
-    private static String dayDonatorAmount = "";
-    private static String weekDonatorAmount = "";
-    private static String monthDonatorAmount = "";
+    private static String firstPlaceDonatorAmount = DEFAULT_PLACEHOLDER;
+    private static String secondPlaceDonatorAmount = DEFAULT_PLACEHOLDER;
+    private static String thirdPlaceDonatorAmount = DEFAULT_PLACEHOLDER;
+    private static String dayDonatorAmount = DEFAULT_PLACEHOLDER;
+    private static String weekDonatorAmount = DEFAULT_PLACEHOLDER;
+    private static String monthDonatorAmount = DEFAULT_PLACEHOLDER;
 
     public static ArrayList<Package> getPackagesWithCategoryId(int categoryId) {
 

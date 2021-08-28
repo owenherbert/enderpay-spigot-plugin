@@ -1,5 +1,6 @@
 package com.enderpay.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import com.enderpay.model.Page;
@@ -15,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
-public class PageGui extends BaseGui implements Listener {
+public final class PageGui extends BaseGui implements Listener {
 
     private final ArrayList<Page> pages;
     private final int backSlotIndex;
@@ -70,11 +71,8 @@ public class PageGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
 
-            Material material = Material.getMaterial("GRAY_STAINED_GLASS_PANE");
-            if (material == null) material = Material.AIR;
-
             inventory.setItem(itemIndex, createGuiItem(
-                    material,
+                    XMaterial.GRAY_STAINED_GLASS_PANE.parseMaterial(),
                     "",
                     1,
                     false,

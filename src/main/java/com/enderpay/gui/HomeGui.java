@@ -1,5 +1,6 @@
 package com.enderpay.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import com.enderpay.model.Category;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 public final class HomeGui extends BaseGui implements Listener {
 
     private final int pagesSlotIndex;
+    private final int donatorsSlotIndex;
 
     public HomeGui() {
 
@@ -25,7 +27,8 @@ public final class HomeGui extends BaseGui implements Listener {
 
         int totalSlots = (categoryRowCount + 1) * 9;
 
-        this.pagesSlotIndex = totalSlots - 1;
+        this.pagesSlotIndex = totalSlots - 2;
+        this.donatorsSlotIndex = totalSlots - 1;
 
         inventory = Bukkit.createInventory(null, totalSlots, Enderpay.getStore().getName());
 
@@ -63,11 +66,8 @@ public final class HomeGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
 
-            Material material = Material.getMaterial("GRAY_STAINED_GLASS_PANE");
-            if (material == null) material = Material.AIR;
-
             inventory.setItem(itemIndex, createGuiItem(
-                    material,
+                    XMaterial.GRAY_STAINED_GLASS_PANE.parseMaterial(),
                     "",
                     1,
                     false,
@@ -78,12 +78,22 @@ public final class HomeGui extends BaseGui implements Listener {
         }
 
         // add pages menu item to the GUI
-        inventory.setItem(totalSlots - 1, createGuiItem(
+        inventory.setItem(totalSlots - 2, createGuiItem(
                 Material.PAPER,
                 "&fPages",
                 1,
                 true,
                 false,
+                ""
+        ));
+
+        // add donators menu item to the GUI
+        inventory.setItem(totalSlots - 1, createGuiItem(
+                XMaterial.ENDER_EYE.parseMaterial(),
+                "&fTop Donators",
+                1,
+                true,
+                true,
                 ""
         ));
     }
@@ -107,6 +117,11 @@ public final class HomeGui extends BaseGui implements Listener {
 
             if (slotIndex == pagesSlotIndex) {
                 Enderpay.getPageGui().openInventory(player);
+                return;
+            }
+
+            if (slotIndex == donatorsSlotIndex) {
+                Enderpay.getDonatorsGui().openInventory(player);
                 return;
             }
 

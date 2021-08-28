@@ -1,19 +1,19 @@
 package com.enderpay;
 
-import com.enderpay.api.ApiResponseCallback;
 import com.enderpay.api.EnderpayApi;
 import com.enderpay.gui.CategoryGui;
+import com.enderpay.gui.DonatorsGui;
 import com.enderpay.gui.HomeGui;
 import com.enderpay.gui.PageGui;
 import com.enderpay.model.Package;
 import com.enderpay.model.*;
+import com.enderpay.papi.EnderpayExpansion;
 import com.enderpay.utils.UuidConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,6 +27,7 @@ public class Enderpay {
 
     private static HomeGui homeGui; // the home GUI
     private static PageGui pageGui; // the page GUI
+    private static DonatorsGui donatorsGui; // the donator GUI
     private static HashMap<Integer, CategoryGui> categoryGuiHashMap = new HashMap<>(); // a hashmap of category GUIs
 
     private static boolean isLoaded = false; // if models and GUIs have been loaded
@@ -36,6 +37,26 @@ public class Enderpay {
     private static ArrayList<Page> pages; // an array list of page models
     private static Store store; // the store model
     private static Currency currency; // the currency model
+
+    // donator usernames
+    private static String latestDonatorUsername = ""; // the username of the latest donator
+    private static String firstPlaceDonatorUsername = ""; // the username of the donator in first place
+    private static String secondPlaceDonatorUsername = ""; // the username of the donator in second place
+    private static String thirdPlaceDonatorUsername = ""; // the username of the donator in third place
+    private static String dayDonatorUsername = ""; // the username of the donator that has donated the most today
+    private static String weekDonatorUsername = ""; // the username of the donator that has donated the most this week
+    private static String monthDonatorUsername = ""; // the username of the donator that has donated the most this month
+
+    private static String firstPlaceDonatorUuid = ""; // the uuid of the donator in first place
+    private static String secondPlaceDonatorUuid = ""; // the uuid of the donator in second place
+    private static String thirdPlaceDonatorUuid = ""; // the uuid of the donator in third place
+
+    private static String firstPlaceDonatorAmount = "";
+    private static String secondPlaceDonatorAmount = "";
+    private static String thirdPlaceDonatorAmount = "";
+    private static String dayDonatorAmount = "";
+    private static String weekDonatorAmount = "";
+    private static String monthDonatorAmount = "";
 
     public static ArrayList<Package> getPackagesWithCategoryId(int categoryId) {
 
@@ -271,7 +292,90 @@ public class Enderpay {
                     categoryGuiHashMap.put(category.getId(), new CategoryGui(category.getId()));
                 }
 
-                isLoaded = true;
+                enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_DONATORS_GET, EnderpayApi.METHOD_GET, null, jsonObject2 -> {
+
+                    // set top donators
+                    JSONArray topDonators = jsonObject2.getJSONObject("data").getJSONArray("topDonators");
+                    if (!topDonators.isEmpty()) {
+
+                        for (int i = 0; i < topDonators.length(); i++) {
+                            JSONObject donator = topDonators.getJSONObject(i);
+
+                            switch (donator.getInt("rank")) {
+                                case 1:
+                                    Enderpay.setFirstPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
+                                    Enderpay.setFirstPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
+                                    Enderpay.setFirstPlaceDonatorAmount(donator.getString("total"));
+                                    break;
+                                case 2:
+                                    Enderpay.setSecondPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
+                                    Enderpay.setSecondPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
+                                    Enderpay.setSecondPlaceDonatorAmount(donator.getString("total"));
+                                    break;
+                                case 3:
+                                    Enderpay.setThirdPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
+                                    Enderpay.setThirdPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
+                                    Enderpay.setThirdPlaceDonatorAmount(donator.getString("total"));
+                                    break;
+                            }
+                        }
+                    }
+
+                    // set latest donator
+                    if (!jsonObject2.getJSONObject("data").isNull("latestDonator")) {
+
+                        JSONObject latestDonator = jsonObject2.getJSONObject("data").getJSONObject("latestDonator");
+
+                        Enderpay.setLatestDonatorUsername(
+                                latestDonator.getJSONObject("customer").getString("username")
+                        );
+                    }
+
+                    // set day top donator
+                    if (!jsonObject2.getJSONObject("data").isNull("dayTopDonator")) {
+
+                        JSONObject dayTopDonator = jsonObject2.getJSONObject("data").getJSONObject("dayTopDonator");
+
+                        Enderpay.setDayDonatorUsername(
+                                dayTopDonator.getJSONObject("customer").getString("username")
+                        );
+
+                        Enderpay.setDayDonatorAmount(dayTopDonator.getString("total"));
+                    }
+
+                    // set week top donator
+                    if (!jsonObject2.getJSONObject("data").isNull("weekTopDonator")) {
+
+                        JSONObject weekTopDonator = jsonObject2.getJSONObject("data").getJSONObject("weekTopDonator");
+
+                        Enderpay.setWeekDonatorUsername(
+                                weekTopDonator.getJSONObject("customer").getString("username")
+                        );
+
+                        Enderpay.setWeekDonatorAmount(weekTopDonator.getString("total"));
+                    }
+
+                    // set month top donator
+                    if (!jsonObject2.getJSONObject("data").isNull("monthTopDonator")) {
+
+                        JSONObject monthTopDonator = jsonObject2.getJSONObject("data").getJSONObject("monthTopDonator");
+
+                        Enderpay.setMonthDonatorUsername(
+                                monthTopDonator.getJSONObject("customer").getString("username")
+                        );
+
+                        Enderpay.setMonthDonatorAmount(monthTopDonator.getString("total"));
+                    }
+
+                    // register Placeholder API expansion
+                    if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                        new EnderpayExpansion(plugin).register();
+                    }
+
+                    donatorsGui = new DonatorsGui();
+
+                    isLoaded = true;
+                });
             });
         });
     }
@@ -298,6 +402,14 @@ public class Enderpay {
 
     public static void setPageGui(PageGui pageGui) {
         Enderpay.pageGui = pageGui;
+    }
+
+    public static DonatorsGui getDonatorsGui() {
+        return donatorsGui;
+    }
+
+    public static void setDonatorsGui(DonatorsGui donatorsGui) {
+        Enderpay.donatorsGui = donatorsGui;
     }
 
     public static HashMap<Integer, CategoryGui> getCategoryGuiHashMap() {
@@ -354,5 +466,133 @@ public class Enderpay {
 
     public static void setCurrency(Currency currency) {
         Enderpay.currency = currency;
+    }
+
+    public static String getLatestDonatorUsername() {
+        return latestDonatorUsername;
+    }
+
+    public static void setLatestDonatorUsername(String latestDonatorUsername) {
+        Enderpay.latestDonatorUsername = latestDonatorUsername;
+    }
+
+    public static String getFirstPlaceDonatorUsername() {
+        return firstPlaceDonatorUsername;
+    }
+
+    public static void setFirstPlaceDonatorUsername(String firstPlaceDonatorUsername) {
+        Enderpay.firstPlaceDonatorUsername = firstPlaceDonatorUsername;
+    }
+
+    public static String getSecondPlaceDonatorUsername() {
+        return secondPlaceDonatorUsername;
+    }
+
+    public static void setSecondPlaceDonatorUsername(String secondPlaceDonatorUsername) {
+        Enderpay.secondPlaceDonatorUsername = secondPlaceDonatorUsername;
+    }
+
+    public static String getThirdPlaceDonatorUsername() {
+        return thirdPlaceDonatorUsername;
+    }
+
+    public static void setThirdPlaceDonatorUsername(String thirdPlaceDonatorUsername) {
+        Enderpay.thirdPlaceDonatorUsername = thirdPlaceDonatorUsername;
+    }
+
+    public static String getDayDonatorUsername() {
+        return dayDonatorUsername;
+    }
+
+    public static void setDayDonatorUsername(String dayDonatorUsername) {
+        Enderpay.dayDonatorUsername = dayDonatorUsername;
+    }
+
+    public static String getWeekDonatorUsername() {
+        return weekDonatorUsername;
+    }
+
+    public static void setWeekDonatorUsername(String weekDonatorUsername) {
+        Enderpay.weekDonatorUsername = weekDonatorUsername;
+    }
+
+    public static String getMonthDonatorUsername() {
+        return monthDonatorUsername;
+    }
+
+    public static void setMonthDonatorUsername(String monthDonatorUsername) {
+        Enderpay.monthDonatorUsername = monthDonatorUsername;
+    }
+
+    public static String getFirstPlaceDonatorAmount() {
+        return firstPlaceDonatorAmount;
+    }
+
+    public static void setFirstPlaceDonatorAmount(String firstPlaceDonatorAmount) {
+        Enderpay.firstPlaceDonatorAmount = firstPlaceDonatorAmount;
+    }
+
+    public static String getSecondPlaceDonatorAmount() {
+        return secondPlaceDonatorAmount;
+    }
+
+    public static void setSecondPlaceDonatorAmount(String secondPlaceDonatorAmount) {
+        Enderpay.secondPlaceDonatorAmount = secondPlaceDonatorAmount;
+    }
+
+    public static String getThirdPlaceDonatorAmount() {
+        return thirdPlaceDonatorAmount;
+    }
+
+    public static void setThirdPlaceDonatorAmount(String thirdPlaceDonatorAmount) {
+        Enderpay.thirdPlaceDonatorAmount = thirdPlaceDonatorAmount;
+    }
+
+    public static String getDayDonatorAmount() {
+        return dayDonatorAmount;
+    }
+
+    public static void setDayDonatorAmount(String dayDonatorAmount) {
+        Enderpay.dayDonatorAmount = dayDonatorAmount;
+    }
+
+    public static String getWeekDonatorAmount() {
+        return weekDonatorAmount;
+    }
+
+    public static void setWeekDonatorAmount(String weekDonatorAmount) {
+        Enderpay.weekDonatorAmount = weekDonatorAmount;
+    }
+
+    public static String getMonthDonatorAmount() {
+        return monthDonatorAmount;
+    }
+
+    public static void setMonthDonatorAmount(String monthDonatorAmount) {
+        Enderpay.monthDonatorAmount = monthDonatorAmount;
+    }
+
+    public static String getFirstPlaceDonatorUuid() {
+        return firstPlaceDonatorUuid;
+    }
+
+    public static void setFirstPlaceDonatorUuid(String firstPlaceDonatorUuid) {
+        Enderpay.firstPlaceDonatorUuid = firstPlaceDonatorUuid;
+    }
+
+    public static String getSecondPlaceDonatorUuid() {
+        return secondPlaceDonatorUuid;
+    }
+
+    public static void setSecondPlaceDonatorUuid(String secondPlaceDonatorUuid) {
+        Enderpay.secondPlaceDonatorUuid = secondPlaceDonatorUuid;
+    }
+
+    public static String getThirdPlaceDonatorUuid() {
+        return thirdPlaceDonatorUuid;
+    }
+
+    public static void setThirdPlaceDonatorUuid(String thirdPlaceDonatorUuid) {
+        Enderpay.thirdPlaceDonatorUuid = thirdPlaceDonatorUuid;
     }
 }

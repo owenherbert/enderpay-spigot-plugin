@@ -21,7 +21,7 @@ public class HelpCommand implements CommandExecutor {
             player.sendMessage(ChatColor.LIGHT_PURPLE + "/buy " + ChatColor.GRAY + "Open server buy menu.");
             player.sendMessage(ChatColor.LIGHT_PURPLE + "/enderpay-setup <api-key> <api-secret> " + ChatColor.GRAY + "Setup API credentials.");
             player.sendMessage(ChatColor.LIGHT_PURPLE + "/enderpay-force " + ChatColor.GRAY + "Check for new commands.");
-            player.sendMessage(ChatColor.LIGHT_PURPLE + "/enderpay-sync " + ChatColor.GRAY + "Sync the latest.");
+            player.sendMessage(ChatColor.LIGHT_PURPLE + "/enderpay-sync " + ChatColor.GRAY + "Sync the latest data.");
             player.sendMessage("");
         } else {
             MessageBroadcaster.toConsole("This command can only be executed by a player!");

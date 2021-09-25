@@ -1,5 +1,6 @@
 package com.enderpay.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -16,6 +17,28 @@ public abstract class BaseGui {
 
     protected String replaceAndColours(String original) {
         return original.replaceAll("&", "§");
+    }
+
+    protected ItemStack makeBackGuiItem() {
+        return createGuiItem(
+                Material.ARROW,
+                "&fGo Back",
+                1,
+                true,
+                false,
+                ""
+        );
+    }
+
+    protected ItemStack makeGlassGuiItem() {
+        return createGuiItem(
+                XMaterial.GRAY_STAINED_GLASS_PANE.parseMaterial(),
+                "",
+                1,
+                false,
+                false,
+                ""
+        );
     }
 
     protected ItemStack createGuiItem(final Material material, final String name, int quantity, boolean displayClickInName, boolean isEnchanted, final String... lore) {

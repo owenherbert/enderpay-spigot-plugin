@@ -1,7 +1,10 @@
 package com.enderpay;
 
 import com.enderpay.commands.*;
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -28,9 +31,20 @@ public final class Plugin extends JavaPlugin {
         this.getCommand("enderpay-help").setExecutor(new HelpCommand());
         this.getCommand("buy").setExecutor(new BuyCommand());
 
+        // setup permissions - Vault is required so the plugin will disable if it is not found
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            MessageBroadcaster.toConsole("The plugin requires the Vault plugin to be installed to function correctly. Please stop your server and install the Vault plugin.");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        Enderpay.setPermissions(rsp.getProvider());
+
         // set scheduler
         this.getServer().getScheduler().cancelTasks(this);
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::checkForNewCommands, 0, 4800); // 4 minutes
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::uploadPlayers, 0, 4800); // 4 minutes
 
         Enderpay.setPlugin(this);
 

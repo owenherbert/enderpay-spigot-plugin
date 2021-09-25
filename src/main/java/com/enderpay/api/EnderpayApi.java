@@ -21,6 +21,7 @@ public class EnderpayApi {
     public static String ENDPOINT_PLUGIN_STORE_GET = "plugin/store"; // the store endpoint
     public static String ENDPOINT_PLUGIN_COMMAND_QUEUE = "plugin/queue"; // the queue endpoint
     public static String ENDPOINT_PLUGIN_DONATORS_GET = "plugin/donators"; // the donators endpoint
+    public static String ENDPOINT_PLUGIN_PLAYERS = "plugin/players"; // the active players endpoint
 
     public static String METHOD_GET = "GET";
     public static String METHOD_PUT = "PUT";

@@ -23,11 +23,11 @@ public class DonatorsGui extends BaseGui implements Listener {
 
         Enderpay.getPlugin().getServer().getPluginManager().registerEvents(this, Enderpay.getPlugin());
 
-        this.backSlotIndex = 8;
+        this.backSlotIndex = 17;
 
-        inventory = Bukkit.createInventory(null, 9, Enderpay.getStore().getName() + " » Top Donators");
+        inventory = Bukkit.createInventory(null, 18, Enderpay.getStore().getName() + " » Top Donators");
 
-        fillItems(9);
+        fillItems(18);
     }
 
     private void fillItems(int totalSlots) {
@@ -91,15 +91,17 @@ public class DonatorsGui extends BaseGui implements Listener {
             }
         }
 
+        // add glass panes to the GUI
+        for (int i = 0; i < 8; i++) {
+
+            int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
+
+            inventory.setItem(itemIndex, makeGlassGuiItem());
+
+        }
+
         // add back menu item to the GUI
-        inventory.setItem(totalSlots - 1, createGuiItem(
-                Material.ARROW,
-                "&fGo Back",
-                1,
-                true,
-                false,
-                ""
-        ));
+        inventory.setItem(backSlotIndex, makeBackGuiItem());
     }
 
     @EventHandler

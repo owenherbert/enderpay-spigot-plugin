@@ -15,4 +15,7 @@ public class UuidConverter {
         return sb.toString();
     }
 
+    public static String removeDashes(String uuid) {
+        return uuid.replace("-", "");
+    }
 }

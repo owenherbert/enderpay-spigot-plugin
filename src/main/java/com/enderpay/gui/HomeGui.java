@@ -66,26 +66,25 @@ public final class HomeGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
 
-            inventory.setItem(itemIndex, createGuiItem(
-                    XMaterial.GRAY_STAINED_GLASS_PANE.parseMaterial(),
-                    "",
-                    1,
-                    false,
-                    false,
-                    ""
-            ));
+            inventory.setItem(itemIndex, makeGlassGuiItem());
 
         }
 
-        // add pages menu item to the GUI
-        inventory.setItem(totalSlots - 2, createGuiItem(
-                Material.PAPER,
-                "&fPages",
-                1,
-                true,
-                false,
-                ""
-        ));
+        // add pages menu item to the GUI - only add if there are pages
+
+        if (Enderpay.getPages().isEmpty()) {
+            inventory.setItem(pagesSlotIndex, makeGlassGuiItem());
+        } else {
+
+            inventory.setItem(pagesSlotIndex, createGuiItem(
+                    Material.PAPER,
+                    "&fPages",
+                    1,
+                    true,
+                    false,
+                    ""
+            ));
+        }
 
         // add donators menu item to the GUI
         inventory.setItem(totalSlots - 1, createGuiItem(

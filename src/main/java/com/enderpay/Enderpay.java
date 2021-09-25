@@ -1,5 +1,6 @@
 package com.enderpay;
 
+import com.enderpay.api.ApiResponseCallback;
 import com.enderpay.api.EnderpayApi;
 import com.enderpay.gui.CategoryGui;
 import com.enderpay.gui.DonatorsGui;
@@ -9,6 +10,7 @@ import com.enderpay.model.Package;
 import com.enderpay.model.*;
 import com.enderpay.papi.EnderpayExpansion;
 import com.enderpay.utils.UuidConverter;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -26,6 +29,8 @@ public class Enderpay {
     public static final String DEFAULT_PLACEHOLDER = "N/A";
 
     private static Plugin plugin; // the plugin
+
+    private static Permission permissions;
 
     private static HomeGui homeGui; // the home GUI
     private static PageGui pageGui; // the page GUI
@@ -78,6 +83,39 @@ public class Enderpay {
         }
 
         return null;
+    }
+
+    public static void uploadPlayers() {
+
+        EnderpayApi enderpayApi = new EnderpayApi();
+
+        JSONArray activePlayers = new JSONArray();
+
+        // get the username, uuid and primary rank of all online players
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+
+            JSONObject activePlayer = new JSONObject();
+            activePlayer.put("username", player.getName());
+            activePlayer.put("uuid", UuidConverter.removeDashes(player.getUniqueId().toString()));
+
+            try {
+                activePlayer.put("rank", Enderpay.getPermissions().getPrimaryGroup(player).toLowerCase());
+            } catch (UnsupportedOperationException exception) { // if there is no permissions plugin, then specify empty rank name
+                activePlayer.put("rank", "");
+            }
+
+            activePlayers.put(activePlayer);
+        }
+
+        JSONObject jsonRequestBody = new JSONObject();
+        jsonRequestBody.put("players", activePlayers);
+
+        // only send the request if there are active players
+        if (activePlayers.length() > 0) {
+            enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_PLAYERS, EnderpayApi.METHOD_PUT, jsonRequestBody, jsonObject -> {
+
+            });
+        }
     }
 
     public static void checkForNewCommands() {
@@ -599,5 +637,13 @@ public class Enderpay {
 
     public static void setThirdPlaceDonatorUuid(String thirdPlaceDonatorUuid) {
         Enderpay.thirdPlaceDonatorUuid = thirdPlaceDonatorUuid;
+    }
+
+    public static Permission getPermissions() {
+        return permissions;
+    }
+
+    public static void setPermissions(Permission permissions) {
+        Enderpay.permissions = permissions;
     }
 }

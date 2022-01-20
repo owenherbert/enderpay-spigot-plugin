@@ -33,7 +33,7 @@ public abstract class BaseGui {
     protected ItemStack makeGlassGuiItem() {
         return createGuiItem(
                 XMaterial.GRAY_STAINED_GLASS_PANE.parseMaterial(),
-                "",
+                " ",
                 1,
                 false,
                 false,

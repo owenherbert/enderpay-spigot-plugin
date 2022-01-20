@@ -1,5 +1,6 @@
 package com.enderpay;
 
+import com.enderpay.api.EnderpayApi;
 import com.enderpay.commands.*;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
@@ -24,19 +25,36 @@ public final class Plugin extends JavaPlugin {
         fileConfig = new File(this.getDataFolder().getPath(), "config.yml");
         config = YamlConfiguration.loadConfiguration(fileConfig);
 
+        // check api key and secret specified in the config
+        String cfgApiKey = config.getString("api-key");
+        String cfgApiSecret = config.getString("api-secret");
+
+        if (cfgApiKey.length() != 25 || cfgApiSecret.length() != 25) {
+
+            MessageBroadcaster.toConsole("You must enter your correct API details into the Enderpay plugin configuration file. Plugin will now disable.");
+
+            Bukkit.getPluginManager().disablePlugin(this);
+
+            return;
+        }
+
+        // setup permissions - Vault is required so the plugin will disable if it is not found
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+
+            MessageBroadcaster.toConsole("The plugin requires the Vault plugin to be installed to function correctly. Please stop your server and install the Vault plugin.");
+
+            Bukkit.getPluginManager().disablePlugin(this);
+
+            return;
+
+        }
+
         // register commands
         this.getCommand("enderpay-setup").setExecutor(new SetupCommand());
         this.getCommand("enderpay-sync").setExecutor(new SyncCommand());
         this.getCommand("enderpay-force").setExecutor(new ForceCommand());
         this.getCommand("enderpay-help").setExecutor(new HelpCommand());
         this.getCommand("buy").setExecutor(new BuyCommand());
-
-        // setup permissions - Vault is required so the plugin will disable if it is not found
-        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
-            MessageBroadcaster.toConsole("The plugin requires the Vault plugin to be installed to function correctly. Please stop your server and install the Vault plugin.");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
 
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         Enderpay.setPermissions(rsp.getProvider());

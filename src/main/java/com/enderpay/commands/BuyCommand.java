@@ -3,11 +3,16 @@ package com.enderpay.commands;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.FireworkMeta;
 
 public class BuyCommand implements CommandExecutor {
 
@@ -23,6 +28,32 @@ public class BuyCommand implements CommandExecutor {
             if (Enderpay.isLoaded()) {
                 Enderpay.getHomeGui().openInventory((HumanEntity) sender);
                 XSound.play(player, "ORB_PICKUP");
+
+                // launch firework if enabled in config
+                boolean spawnFirework = Enderpay.getPlugin().getConfig().getBoolean("buy-command-firework");
+
+                if (spawnFirework) {
+
+                    Firework firework = (Firework) player.getWorld()
+                            .spawnEntity(player.getEyeLocation(), EntityType.FIREWORK);
+
+                    FireworkEffect fireworkEffect = FireworkEffect.builder()
+                            .trail(true)
+                            .flicker(true)
+                            .withColor(Color.PURPLE)
+                            .with(FireworkEffect.Type.BALL)
+                            .build();
+
+                    FireworkMeta fireworkMeta = firework.getFireworkMeta();
+
+                    fireworkMeta.setPower(4);
+                    fireworkMeta.addEffect(fireworkEffect);
+
+                    firework.setFireworkMeta(fireworkMeta);
+                    firework.detonate();
+
+                }
+
             } else {
 
                 player.sendMessage("");

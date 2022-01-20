@@ -1,3 +1,5 @@
 api-key: "INSERT-API-KEY-HERE"
 api-secret: "INSERT-API-SECRET-HERE"
 buy-command: "/buy"
+buy-command-firework: true
+debug-mode: false

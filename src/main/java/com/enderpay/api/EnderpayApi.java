@@ -79,6 +79,12 @@ public class EnderpayApi {
 
     // builds the API endpoint based on the domain, version, and specified endpoint.
     private static String buildPath(String endpoint) {
-        return API_DOMAIN + "/v" + API_VERSION + "/" + endpoint;
+
+        // check if debug mode is enabled
+        boolean debugMode = Enderpay.getPlugin().getConfig().getBoolean("debug-mode");
+
+        String domain = debugMode ? "http://api.localtest.me:8000" : API_DOMAIN;
+
+        return domain + "/v" + API_VERSION + "/" + endpoint;
     }
 }

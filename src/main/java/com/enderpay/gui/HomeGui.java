@@ -5,6 +5,7 @@ import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import com.enderpay.model.Category;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +18,7 @@ public final class HomeGui extends BaseGui implements Listener {
 
     private final int pagesSlotIndex;
     private final int donatorsSlotIndex;
+    private final int donationPartiesSlotIndex;
 
     public HomeGui() {
 
@@ -27,6 +29,7 @@ public final class HomeGui extends BaseGui implements Listener {
 
         int totalSlots = (categoryRowCount + 1) * 9;
 
+        this.donationPartiesSlotIndex = totalSlots - 3;
         this.pagesSlotIndex = totalSlots - 2;
         this.donatorsSlotIndex = totalSlots - 1;
 
@@ -70,30 +73,40 @@ public final class HomeGui extends BaseGui implements Listener {
 
         }
 
-        // add pages menu item to the GUI - only add if there are pages
-
-        if (Enderpay.getPages().isEmpty()) {
-            inventory.setItem(pagesSlotIndex, makeGlassGuiItem());
-        } else {
-
-            inventory.setItem(pagesSlotIndex, createGuiItem(
-                    Material.PAPER,
-                    "&fPages",
-                    1,
-                    true,
-                    false,
-                    ""
-            ));
-        }
+        // add pages menu item to the GUI
+        inventory.setItem(pagesSlotIndex, createGuiItem(
+                Material.PAPER,
+                "&fPages",
+                1,
+                true,
+                true,
+                " ",
+                "&8Click on this item to open a list",
+                "&8of available store pages."
+        ));
 
         // add donators menu item to the GUI
-        inventory.setItem(totalSlots - 1, createGuiItem(
+        inventory.setItem(donatorsSlotIndex, createGuiItem(
                 XMaterial.ENDER_EYE.parseMaterial(),
                 "&fTop Donators",
                 1,
                 true,
                 true,
-                ""
+                " ",
+                "&8Click on this item to open the top",
+                "&8donators page."
+        ));
+
+        // add donation parties menu item to the GUI
+        inventory.setItem(donationPartiesSlotIndex, createGuiItem(
+                XMaterial.FIREWORK_ROCKET.parseMaterial(),
+                "&fDonation Parties",
+                1,
+                true,
+                true,
+                " ",
+                "&8Click on this item to open the",
+                "&8donation party status page."
         ));
     }
 
@@ -115,13 +128,44 @@ public final class HomeGui extends BaseGui implements Listener {
             XSound.play(player, "CHICKEN_EGG_POP");
 
             if (slotIndex == pagesSlotIndex) {
-                Enderpay.getPageGui().openInventory(player);
-                return;
+
+                PageGui pageGui = Enderpay.getPageGui();
+
+                if (!Enderpay.getPages().isEmpty()) {
+                    pageGui.openInventory(player);
+                    return;
+                }
+
+                player.closeInventory();
+                player.sendMessage("");
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + Enderpay.getStore().getName());
+                player.sendMessage("");
+                player.sendMessage(ChatColor.GRAY + "There are no pages to display!");
+                player.sendMessage("");
             }
 
             if (slotIndex == donatorsSlotIndex) {
-                Enderpay.getDonatorsGui().openInventory(player);
+
+                DonatorsGui donatorsGui = new DonatorsGui();
+                donatorsGui.openInventory(player);
                 return;
+
+            }
+
+            if (slotIndex == donationPartiesSlotIndex) {
+
+                if (!Enderpay.getDonationParties().isEmpty()) {
+                    DonationPartyGui donationPartyGui = new DonationPartyGui();
+                    donationPartyGui.openInventory(player);
+                    return;
+                }
+
+                player.closeInventory();
+                player.sendMessage("");
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + Enderpay.getStore().getName());
+                player.sendMessage("");
+                player.sendMessage(ChatColor.GRAY + "There are no donation parties to display!");
+                player.sendMessage("");
             }
 
             if (slotIndex < Enderpay.getCategoryGuiHashMap().size()) {

@@ -27,30 +27,40 @@ public class BuyCommand implements CommandExecutor {
 
             if (Enderpay.isLoaded()) {
                 Enderpay.getHomeGui().openInventory((HumanEntity) sender);
-                XSound.play(player, "ORB_PICKUP");
 
-                // launch firework if enabled in config
-                boolean spawnFirework = Enderpay.getPlugin().getConfig().getBoolean("buy-command-firework");
+                // check and play sound if supported
+                if (XSound.ENTITY_EXPERIENCE_ORB_PICKUP.isSupported()) {
+                    XSound.play(player, XSound.ENTITY_EXPERIENCE_ORB_PICKUP.toString());
+                }
 
-                if (spawnFirework) {
+                try {
 
-                    Firework firework = (Firework) player.getWorld()
-                            .spawnEntity(player.getEyeLocation(), EntityType.FIREWORK);
+                    // try launch firework if enabled in config
+                    boolean spawnFirework = Enderpay.getPlugin().getConfig().getBoolean("buy-command-firework");
 
-                    FireworkEffect fireworkEffect = FireworkEffect.builder()
-                            .trail(true)
-                            .flicker(true)
-                            .withColor(Color.PURPLE)
-                            .with(FireworkEffect.Type.BALL)
-                            .build();
+                    if (spawnFirework) {
 
-                    FireworkMeta fireworkMeta = firework.getFireworkMeta();
+                        Firework firework = (Firework) player.getWorld()
+                                .spawnEntity(player.getEyeLocation(), EntityType.FIREWORK);
 
-                    fireworkMeta.setPower(4);
-                    fireworkMeta.addEffect(fireworkEffect);
+                        FireworkEffect fireworkEffect = FireworkEffect.builder()
+                                .trail(true)
+                                .flicker(true)
+                                .withColor(Color.PURPLE)
+                                .with(FireworkEffect.Type.BALL)
+                                .build();
 
-                    firework.setFireworkMeta(fireworkMeta);
-                    firework.detonate();
+                        FireworkMeta fireworkMeta = firework.getFireworkMeta();
+
+                        fireworkMeta.setPower(4);
+                        fireworkMeta.addEffect(fireworkEffect);
+
+                        firework.setFireworkMeta(fireworkMeta);
+                        firework.detonate();
+
+                    }
+
+                } catch (Exception e) {
 
                 }
 

@@ -42,6 +42,7 @@ public class Enderpay {
     private static ArrayList<Category> categories; // an array list of category models
     private static ArrayList<Package> packages; // an array list of package models
     private static ArrayList<Page> pages; // an array list of page models
+    private static ArrayList<DonationParty> donationParties; // an array list of donation parties
     private static Store store; // the store model
     private static Currency currency; // the currency model
 
@@ -83,6 +84,34 @@ public class Enderpay {
         }
 
         return null;
+    }
+
+    public static void updateDonationParties() {
+
+        EnderpayApi enderpayApi = new EnderpayApi();
+
+        enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_DONATION_PARTIES_GET, EnderpayApi.METHOD_GET, null, jsonObject -> {
+
+            JSONArray donationParties = jsonObject.getJSONObject("data").getJSONArray("donationParties");
+            for (int i = 0; i < donationParties.length(); i++) {
+                JSONObject donationPartyObject = donationParties.getJSONObject(i);
+
+                DonationParty donationParty = new DonationParty();
+                donationParty.setId(donationPartyObject.getInt("id"));
+                donationParty.setName(donationPartyObject.getString("name"));
+                donationParty.setGoal(donationPartyObject.getFloat("goal"));
+                donationParty.setPercentageComplete(donationPartyObject.getFloat("percentageComplete"));
+                donationParty.setHasExecuted(donationPartyObject.getBoolean("hasExecuted"));
+                donationParty.setStartedAtIso8601(donationPartyObject.getJSONObject("startedAt").getString("iso8601"));
+                donationParty.setStartedAtFriendly(donationPartyObject.getJSONObject("startedAt").getString("friendly"));
+                donationParty.setEndsAtIso8601(donationPartyObject.getJSONObject("endsAt").getString("iso8601"));
+                donationParty.setEndsAtFriendly(donationPartyObject.getJSONObject("endsAt").getString("friendly"));
+
+                Enderpay.getDonationParties().clear();
+                Enderpay.getDonationParties().add(donationParty);
+            }
+
+        });
     }
 
     public static void uploadPlayers() {
@@ -225,6 +254,7 @@ public class Enderpay {
     public static void buildModelsAndGuis() {
 
         // create new array list objects
+        donationParties = new ArrayList<>();
         categories = new ArrayList<>();
         packages = new ArrayList<>();
         pages = new ArrayList<>();
@@ -415,9 +445,8 @@ public class Enderpay {
                         });
                     }
 
-                    donatorsGui = new DonatorsGui();
-
                     isLoaded = true;
+
                 });
             });
         });
@@ -497,6 +526,14 @@ public class Enderpay {
 
     public static Store getStore() {
         return store;
+    }
+
+    public static ArrayList<DonationParty> getDonationParties() {
+        return donationParties;
+    }
+
+    public static void setDonationParties(ArrayList<DonationParty> donationParties) {
+        Enderpay.donationParties = donationParties;
     }
 
     public static void setStore(Store store) {

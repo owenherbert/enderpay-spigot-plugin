@@ -5,7 +5,6 @@ import com.enderpay.Enderpay;
 import com.enderpay.model.DonationParty;
 import com.enderpay.utils.DateTimeHelper;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -94,7 +93,8 @@ public class DonationPartyGui extends BaseGui implements Listener {
             final Player player = (Player) event.getWhoClicked();
 
             if (slotIndex == backSlotIndex) {
-                Enderpay.getHomeGui().openInventory(player);
+                HomeGui homeGui = new HomeGui();
+                homeGui.openInventory(player);
             }
         }
 

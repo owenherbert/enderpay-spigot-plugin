@@ -1,11 +1,6 @@
 package com.enderpay;
 
-import com.enderpay.api.ApiResponseCallback;
 import com.enderpay.api.EnderpayApi;
-import com.enderpay.gui.CategoryGui;
-import com.enderpay.gui.DonatorsGui;
-import com.enderpay.gui.HomeGui;
-import com.enderpay.gui.PageGui;
 import com.enderpay.model.Package;
 import com.enderpay.model.*;
 import com.enderpay.papi.EnderpayExpansion;
@@ -20,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -32,10 +26,7 @@ public class Enderpay {
 
     private static Permission permissions;
 
-    private static HomeGui homeGui; // the home GUI
-    private static PageGui pageGui; // the page GUI
-    private static DonatorsGui donatorsGui; // the donator GUI
-    private static HashMap<Integer, CategoryGui> categoryGuiHashMap = new HashMap<>(); // a hashmap of category GUIs
+    private static HashMap<String, Currency> playerNameCurrencyHashMap = new HashMap<>();
 
     private static boolean isLoaded = false; // if models and GUIs have been loaded
 
@@ -43,8 +34,9 @@ public class Enderpay {
     private static ArrayList<Package> packages; // an array list of package models
     private static ArrayList<Page> pages; // an array list of page models
     private static ArrayList<DonationParty> donationParties; // an array list of donation parties
+    private static ArrayList<Currency> currencies; // an array list of available currencies;
     private static Store store; // the store model
-    private static Currency currency; // the currency model
+    private static Currency baseCurrency; // the base currency model
 
     // donator usernames
     private static String latestDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the latest donator
@@ -84,34 +76,6 @@ public class Enderpay {
         }
 
         return null;
-    }
-
-    public static void updateDonationParties() {
-
-        EnderpayApi enderpayApi = new EnderpayApi();
-
-        enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_DONATION_PARTIES_GET, EnderpayApi.METHOD_GET, null, jsonObject -> {
-
-            JSONArray donationParties = jsonObject.getJSONObject("data").getJSONArray("donationParties");
-            for (int i = 0; i < donationParties.length(); i++) {
-                JSONObject donationPartyObject = donationParties.getJSONObject(i);
-
-                DonationParty donationParty = new DonationParty();
-                donationParty.setId(donationPartyObject.getInt("id"));
-                donationParty.setName(donationPartyObject.getString("name"));
-                donationParty.setGoal(donationPartyObject.getFloat("goal"));
-                donationParty.setPercentageComplete(donationPartyObject.getFloat("percentageComplete"));
-                donationParty.setHasExecuted(donationPartyObject.getBoolean("hasExecuted"));
-                donationParty.setStartedAtIso8601(donationPartyObject.getJSONObject("startedAt").getString("iso8601"));
-                donationParty.setStartedAtFriendly(donationPartyObject.getJSONObject("startedAt").getString("friendly"));
-                donationParty.setEndsAtIso8601(donationPartyObject.getJSONObject("endsAt").getString("iso8601"));
-                donationParty.setEndsAtFriendly(donationPartyObject.getJSONObject("endsAt").getString("friendly"));
-
-                Enderpay.getDonationParties().clear();
-                Enderpay.getDonationParties().add(donationParty);
-            }
-
-        });
     }
 
     public static void uploadPlayers() {
@@ -258,9 +222,11 @@ public class Enderpay {
         categories = new ArrayList<>();
         packages = new ArrayList<>();
         pages = new ArrayList<>();
+        currencies = new ArrayList<>();
 
         EnderpayApi enderpayApi = new EnderpayApi();
 
+        // make request to store data endpoint
         enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_STORE_GET, EnderpayApi.METHOD_GET, null, jsonObject -> {
 
             // set store
@@ -272,18 +238,35 @@ public class Enderpay {
             store.setDescription(!storeJsonData.isNull("description") ? storeJsonData.getString("description") : null);
             store.setDomain(storeJsonData.getString("domain"));
 
-            // set currency
-            JSONObject currencyJsonData = storeJsonData.getJSONObject("currency");
+            // set currency data
+            JSONObject currencyJsonData = storeJsonData.getJSONObject("currency").getJSONObject("base");
 
-            currency = new Currency();
-            currency.setSymbol(currencyJsonData.getString("symbol"));
-            currency.setName(currencyJsonData.getString("currency"));
-            currency.setIso4217(currencyJsonData.getString("iso4217"));
+            baseCurrency = new Currency();
+            baseCurrency.setSymbol(currencyJsonData.getString("symbol"));
+            baseCurrency.setName(currencyJsonData.getString("currency"));
+            baseCurrency.setIso4217(currencyJsonData.getString("iso4217"));
+            baseCurrency.setRate(1);
 
+            JSONArray availableCurrencies = storeJsonData.getJSONObject("currency").getJSONArray("exchangeRates");
+            Enderpay.getCurrencies().clear();
+            for (int i = 0; i < availableCurrencies.length(); i++) {
+                JSONObject availableCurrency = availableCurrencies.getJSONObject(i);
+
+                Currency currency = new Currency();
+                currency.setSymbol(availableCurrency.getString("symbol"));
+                currency.setName(availableCurrency.getString("currency"));
+                currency.setIso4217(availableCurrency.getString("iso4217"));
+                currency.setRate(Float.parseFloat(availableCurrency.getString("rate")));
+
+                currencies.add(currency);
+            }
+
+            // make request to listing data endpoint
             enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_LISTING_GET, EnderpayApi.METHOD_GET, null, jsonObject1 -> {
 
                 // set packages
                 JSONArray packagesJsonData = jsonObject1.getJSONObject("data").getJSONArray("packages");
+                Enderpay.getPackages().clear();
                 for (int i = 0; i < packagesJsonData.length(); i++) {
 
                     JSONObject packageJsonData = packagesJsonData.getJSONObject(i);
@@ -309,6 +292,7 @@ public class Enderpay {
 
                 // set categories
                 JSONArray categoriesJsonData = jsonObject1.getJSONObject("data").getJSONArray("categories");
+                Enderpay.getCategories().clear();
                 for (int i = 0; i < categoriesJsonData.length(); i++) {
 
                     JSONObject categoryJsonObject = categoriesJsonData.getJSONObject(i);
@@ -333,6 +317,7 @@ public class Enderpay {
 
                 // set pages
                 JSONArray pagesJsonData = jsonObject1.getJSONObject("data").getJSONArray("pages");
+                Enderpay.getPages().clear();
                 for (int i = 0; i < pagesJsonData.length(); i++) {
 
                     JSONObject pageJsonObject = pagesJsonData.getJSONObject(i);
@@ -354,100 +339,112 @@ public class Enderpay {
                     pages.add(page); // add page object to array list
                 }
 
-                // build GUIs
-                homeGui = new HomeGui();
-                pageGui = new PageGui();
+                // set donation parties
+                JSONArray donationParties = jsonObject1.getJSONObject("data").getJSONArray("donationParties");
+                Enderpay.getDonationParties().clear();
+                for (int i = 0; i < donationParties.length(); i++) {
+                    JSONObject donationPartyObject = donationParties.getJSONObject(i);
 
-                for (Category category : categories) {
-                    categoryGuiHashMap.put(category.getId(), new CategoryGui(category.getId()));
+                    DonationParty donationParty = new DonationParty();
+                    donationParty.setId(donationPartyObject.getInt("id"));
+                    donationParty.setName(donationPartyObject.getString("name"));
+                    donationParty.setGoal(donationPartyObject.getFloat("goal"));
+                    donationParty.setPercentageComplete(donationPartyObject.getFloat("percentageComplete"));
+                    donationParty.setHasExecuted(donationPartyObject.getBoolean("hasExecuted"));
+                    donationParty.setStartedAtIso8601(donationPartyObject.getJSONObject("startedAt").getString("iso8601"));
+                    donationParty.setStartedAtFriendly(donationPartyObject.getJSONObject("startedAt").getString("friendly"));
+                    donationParty.setEndsAtIso8601(donationPartyObject.getJSONObject("endsAt").getString("iso8601"));
+                    donationParty.setEndsAtFriendly(donationPartyObject.getJSONObject("endsAt").getString("friendly"));
+
+                    Enderpay.getDonationParties().add(donationParty);
                 }
 
-                enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_DONATORS_GET, EnderpayApi.METHOD_GET, null, jsonObject2 -> {
+                // donator information
+                JSONObject donatorInfoObject = jsonObject1.getJSONObject("data").getJSONObject("donatorInformation");
 
-                    // set top donators
-                    JSONArray topDonators = jsonObject2.getJSONObject("data").getJSONArray("topDonators");
-                    if (!topDonators.isEmpty()) {
+                // set top donators
+                JSONArray topDonators = donatorInfoObject.getJSONArray("topDonators");
+                if (!topDonators.isEmpty()) {
 
-                        for (int i = 0; i < topDonators.length(); i++) {
-                            JSONObject donator = topDonators.getJSONObject(i);
+                    for (int i = 0; i < topDonators.length(); i++) {
+                        JSONObject donator = topDonators.getJSONObject(i);
 
-                            switch (donator.getInt("rank")) {
-                                case 1:
-                                    Enderpay.setFirstPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
-                                    Enderpay.setFirstPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
-                                    Enderpay.setFirstPlaceDonatorAmount(donator.getString("total"));
-                                    break;
-                                case 2:
-                                    Enderpay.setSecondPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
-                                    Enderpay.setSecondPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
-                                    Enderpay.setSecondPlaceDonatorAmount(donator.getString("total"));
-                                    break;
-                                case 3:
-                                    Enderpay.setThirdPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
-                                    Enderpay.setThirdPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
-                                    Enderpay.setThirdPlaceDonatorAmount(donator.getString("total"));
-                                    break;
-                            }
+                        switch (donator.getInt("rank")) {
+                            case 1:
+                                Enderpay.setFirstPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
+                                Enderpay.setFirstPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
+                                Enderpay.setFirstPlaceDonatorAmount(donator.getString("total"));
+                                break;
+                            case 2:
+                                Enderpay.setSecondPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
+                                Enderpay.setSecondPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
+                                Enderpay.setSecondPlaceDonatorAmount(donator.getString("total"));
+                                break;
+                            case 3:
+                                Enderpay.setThirdPlaceDonatorUsername(donator.getJSONObject("customer").getString("username"));
+                                Enderpay.setThirdPlaceDonatorUuid(donator.getJSONObject("customer").getString("uuid"));
+                                Enderpay.setThirdPlaceDonatorAmount(donator.getString("total"));
+                                break;
                         }
                     }
+                }
 
-                    // set latest donator
-                    if (!jsonObject2.getJSONObject("data").isNull("latestDonator")) {
+                // set latest donator
+                if (!donatorInfoObject.isNull("latestDonator")) {
 
-                        JSONObject latestDonator = jsonObject2.getJSONObject("data").getJSONObject("latestDonator");
+                    JSONObject latestDonator = donatorInfoObject.getJSONObject("latestDonator");
 
-                        Enderpay.setLatestDonatorUsername(
-                                latestDonator.getJSONObject("customer").getString("username")
-                        );
-                    }
+                    Enderpay.setLatestDonatorUsername(
+                            latestDonator.getJSONObject("customer").getString("username")
+                    );
+                }
 
-                    // set day top donator
-                    if (!jsonObject2.getJSONObject("data").isNull("dayTopDonator")) {
+                // set day top donator
+                if (!donatorInfoObject.isNull("dayTopDonator")) {
 
-                        JSONObject dayTopDonator = jsonObject2.getJSONObject("data").getJSONObject("dayTopDonator");
+                    JSONObject dayTopDonator = donatorInfoObject.getJSONObject("dayTopDonator");
 
-                        Enderpay.setDayDonatorUsername(
-                                dayTopDonator.getJSONObject("customer").getString("username")
-                        );
+                    Enderpay.setDayDonatorUsername(
+                            dayTopDonator.getJSONObject("customer").getString("username")
+                    );
 
-                        Enderpay.setDayDonatorAmount(dayTopDonator.getString("total"));
-                    }
+                    Enderpay.setDayDonatorAmount(dayTopDonator.getString("total"));
+                }
 
-                    // set week top donator
-                    if (!jsonObject2.getJSONObject("data").isNull("weekTopDonator")) {
+                // set week top donator
+                if (!donatorInfoObject.isNull("weekTopDonator")) {
 
-                        JSONObject weekTopDonator = jsonObject2.getJSONObject("data").getJSONObject("weekTopDonator");
+                    JSONObject weekTopDonator = donatorInfoObject.getJSONObject("weekTopDonator");
 
-                        Enderpay.setWeekDonatorUsername(
-                                weekTopDonator.getJSONObject("customer").getString("username")
-                        );
+                    Enderpay.setWeekDonatorUsername(
+                            weekTopDonator.getJSONObject("customer").getString("username")
+                    );
 
-                        Enderpay.setWeekDonatorAmount(weekTopDonator.getString("total"));
-                    }
+                    Enderpay.setWeekDonatorAmount(weekTopDonator.getString("total"));
+                }
 
-                    // set month top donator
-                    if (!jsonObject2.getJSONObject("data").isNull("monthTopDonator")) {
+                // set month top donator
+                if (!donatorInfoObject.isNull("monthTopDonator")) {
 
-                        JSONObject monthTopDonator = jsonObject2.getJSONObject("data").getJSONObject("monthTopDonator");
+                    JSONObject monthTopDonator = donatorInfoObject.getJSONObject("monthTopDonator");
 
-                        Enderpay.setMonthDonatorUsername(
-                                monthTopDonator.getJSONObject("customer").getString("username")
-                        );
+                    Enderpay.setMonthDonatorUsername(
+                            monthTopDonator.getJSONObject("customer").getString("username")
+                    );
 
-                        Enderpay.setMonthDonatorAmount(monthTopDonator.getString("total"));
-                    }
+                    Enderpay.setMonthDonatorAmount(monthTopDonator.getString("total"));
+                }
 
-                    // register Placeholder API expansion
-                    if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                // register Placeholder API expansion
+                if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(Enderpay.getPlugin(), () -> {
-                            new EnderpayExpansion(plugin).register();
-                        });
-                    }
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Enderpay.getPlugin(), () -> {
+                        new EnderpayExpansion(plugin).register();
+                    });
+                }
 
-                    isLoaded = true;
+                isLoaded = true;
 
-                });
             });
         });
     }
@@ -458,38 +455,6 @@ public class Enderpay {
 
     public static void setPlugin(Plugin plugin) {
         Enderpay.plugin = plugin;
-    }
-
-    public static HomeGui getHomeGui() {
-        return homeGui;
-    }
-
-    public static void setHomeGui(HomeGui homeGui) {
-        Enderpay.homeGui = homeGui;
-    }
-
-    public static PageGui getPageGui() {
-        return pageGui;
-    }
-
-    public static void setPageGui(PageGui pageGui) {
-        Enderpay.pageGui = pageGui;
-    }
-
-    public static DonatorsGui getDonatorsGui() {
-        return donatorsGui;
-    }
-
-    public static void setDonatorsGui(DonatorsGui donatorsGui) {
-        Enderpay.donatorsGui = donatorsGui;
-    }
-
-    public static HashMap<Integer, CategoryGui> getCategoryGuiHashMap() {
-        return categoryGuiHashMap;
-    }
-
-    public static void setCategoryGuiHashMap(HashMap<Integer, CategoryGui> categoryGuiHashMap) {
-        Enderpay.categoryGuiHashMap = categoryGuiHashMap;
     }
 
     public static boolean isLoaded() {
@@ -540,12 +505,12 @@ public class Enderpay {
         Enderpay.store = store;
     }
 
-    public static Currency getCurrency() {
-        return currency;
+    public static Currency getBaseCurrency() {
+        return baseCurrency;
     }
 
-    public static void setCurrency(Currency currency) {
-        Enderpay.currency = currency;
+    public static void setBaseCurrency(Currency baseCurrency) {
+        Enderpay.baseCurrency = baseCurrency;
     }
 
     public static String getLatestDonatorUsername() {
@@ -682,5 +647,34 @@ public class Enderpay {
 
     public static void setPermissions(Permission permissions) {
         Enderpay.permissions = permissions;
+    }
+
+    public static ArrayList<Currency> getCurrencies() {
+        return currencies;
+    }
+
+    public static void setCurrencies(ArrayList<Currency> currencies) {
+        Enderpay.currencies = currencies;
+    }
+
+    public static HashMap<String, Currency> getPlayerNameCurrencyHashMap() {
+        return playerNameCurrencyHashMap;
+    }
+
+    public static void setPlayerNameCurrencyHashMap(HashMap<String, Currency> playerNameCurrencyHashMap) {
+        Enderpay.playerNameCurrencyHashMap = playerNameCurrencyHashMap;
+    }
+
+    public static Currency getPlayerStoreCurrency(String playerUsername) {
+        if (playerNameCurrencyHashMap.containsKey(playerUsername)) {
+            return playerNameCurrencyHashMap.get(playerUsername);
+        } else {
+            return baseCurrency;
+        }
+    }
+
+    public static Currency setPlayerStoreCurrency(String playerUsername, Currency currency) {
+        playerNameCurrencyHashMap.put(playerUsername, currency);
+        return currency;
     }
 }

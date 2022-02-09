@@ -19,6 +19,7 @@ public final class HomeGui extends BaseGui implements Listener {
     private final int pagesSlotIndex;
     private final int donatorsSlotIndex;
     private final int donationPartiesSlotIndex;
+    private final int currenciesSlotIndex;
 
     public HomeGui() {
 
@@ -29,6 +30,7 @@ public final class HomeGui extends BaseGui implements Listener {
 
         int totalSlots = (categoryRowCount + 1) * 9;
 
+        this.currenciesSlotIndex = totalSlots - 4;
         this.donationPartiesSlotIndex = totalSlots - 3;
         this.pagesSlotIndex = totalSlots - 2;
         this.donatorsSlotIndex = totalSlots - 1;
@@ -108,6 +110,18 @@ public final class HomeGui extends BaseGui implements Listener {
                 "&8Click on this item to open the",
                 "&8donation party status page."
         ));
+
+        // add currency selector menu item to the GUI
+        inventory.setItem(currenciesSlotIndex, createGuiItem(
+                XMaterial.GOLD_INGOT.parseMaterial(),
+                "&fCurrency Selector",
+                1,
+                true,
+                true,
+                " ",
+                "&8Click on this item to open the",
+                "&8currency selector page."
+        ));
     }
 
     @EventHandler
@@ -129,7 +143,7 @@ public final class HomeGui extends BaseGui implements Listener {
 
             if (slotIndex == pagesSlotIndex) {
 
-                PageGui pageGui = Enderpay.getPageGui();
+                PageGui pageGui = new PageGui();
 
                 if (!Enderpay.getPages().isEmpty()) {
                     pageGui.openInventory(player);
@@ -146,7 +160,7 @@ public final class HomeGui extends BaseGui implements Listener {
 
             if (slotIndex == donatorsSlotIndex) {
 
-                DonatorsGui donatorsGui = new DonatorsGui();
+                DonatorsGui donatorsGui = new DonatorsGui(player.getName());
                 donatorsGui.openInventory(player);
                 return;
 
@@ -168,8 +182,14 @@ public final class HomeGui extends BaseGui implements Listener {
                 player.sendMessage("");
             }
 
-            if (slotIndex < Enderpay.getCategoryGuiHashMap().size()) {
-                CategoryGui categoryGui = Enderpay.getCategoryGuiHashMap().get(Enderpay.getCategories().get(slotIndex).getId());
+            if (slotIndex == currenciesSlotIndex) {
+                CurrencyGui currencyGui = new CurrencyGui();
+                currencyGui.openInventory(player);
+                return;
+            }
+
+            if (slotIndex < Enderpay.getCategories().size()) {
+                CategoryGui categoryGui = new CategoryGui(Enderpay.getCategories().get(slotIndex).getId(), player.getName());
                 categoryGui.openInventory(player);
             }
         }

@@ -26,7 +26,9 @@ public abstract class BaseGui {
                 1,
                 true,
                 false,
-                ""
+                " ",
+                "&8Click on this item to open the",
+                "&8previous page."
         );
     }
 

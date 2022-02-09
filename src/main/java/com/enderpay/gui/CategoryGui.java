@@ -1,9 +1,9 @@
 package com.enderpay.gui;
 
-import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import com.enderpay.model.Category;
+import com.enderpay.model.Currency;
 import com.enderpay.model.Package;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,14 +21,16 @@ public final class CategoryGui extends BaseGui implements Listener {
 
     private final ArrayList<Package> packages;
     private final int backSlotIndex;
+    private final String playerUsername;
 
-    public CategoryGui(int categoryId) {
+    public CategoryGui(int categoryId, String playerUsername) {
 
         Enderpay.getPlugin().getServer().getPluginManager().registerEvents(this, Enderpay.getPlugin());
 
         Category category = Enderpay.getCategoryWithCategoryId(categoryId);
 
         this.packages = Enderpay.getPackagesWithCategoryId(categoryId);
+        this.playerUsername = playerUsername;
 
         double packageCount = packages.size();
         int packageRowCount = (int) Math.ceil(packageCount / 9);
@@ -41,11 +43,11 @@ public final class CategoryGui extends BaseGui implements Listener {
 
         inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
 
-        fillItems(totalSlots);
+        fillItems(totalSlots, playerUsername);
 
     }
 
-    private void fillItems(int totalSlots) {
+    private void fillItems(int totalSlots, String playerUsername) {
 
         // add package items to the GUI
         for (int i = 0; i < this.packages.size(); i++) {
@@ -57,11 +59,14 @@ public final class CategoryGui extends BaseGui implements Listener {
                 material = Material.BEDROCK;
             }
 
-            String price = String.format("%.2f", pckg.getPrice());
+            Currency playerCurrency = Enderpay.getPlayerStoreCurrency(playerUsername);
+
+            String price = String.format("%.2f", pckg.getPrice() * playerCurrency.getRate());
+
 
             String name = pckg.getItemDescription().getName() + " " + ChatColor.GRAY + "(" +
-                    ChatColor.LIGHT_PURPLE + Enderpay.getCurrency().getSymbol() + price + " " +
-                    Enderpay.getCurrency().getIso4217() + ChatColor.GRAY + ")";
+                    ChatColor.LIGHT_PURPLE + playerCurrency.getSymbol() + price + " " +
+                    playerCurrency.getIso4217() + ChatColor.GRAY + ")";
 
             ItemStack itemStack = createGuiItem(
                     material,
@@ -108,7 +113,8 @@ public final class CategoryGui extends BaseGui implements Listener {
 
             // show the home GUI to the player
             if (slotIndex == backSlotIndex) {
-                Enderpay.getHomeGui().openInventory(player);
+                HomeGui homeGui = new HomeGui();
+                homeGui.openInventory(player);
                 return;
             }
 

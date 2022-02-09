@@ -5,6 +5,7 @@ public class Currency {
     private String symbol; // the currency symbol
     private String name; // the currency name
     private String iso4217; // the currency iso 4217
+    private float rate; // the currency rate
 
     public String getSymbol() {
         return symbol;
@@ -28,5 +29,13 @@ public class Currency {
 
     public void setIso4217(String iso4217) {
         this.iso4217 = iso4217;
+    }
+
+    public float getRate() {
+        return rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
     }
 }

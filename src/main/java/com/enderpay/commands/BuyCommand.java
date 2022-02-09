@@ -2,9 +2,11 @@ package com.enderpay.commands;
 
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
+import com.enderpay.gui.HomeGui;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,7 +28,9 @@ public class BuyCommand implements CommandExecutor {
             Player player = (Player) sender;
 
             if (Enderpay.isLoaded()) {
-                Enderpay.getHomeGui().openInventory((HumanEntity) sender);
+
+                HomeGui homeGui = new HomeGui();
+                homeGui.openInventory((HumanEntity) sender);
 
                 // check and play sound if supported
                 if (XSound.ENTITY_EXPERIENCE_ORB_PICKUP.isSupported()) {
@@ -40,8 +44,11 @@ public class BuyCommand implements CommandExecutor {
 
                     if (spawnFirework) {
 
+                        // above players head
+                        Location fireworkLocation = player.getEyeLocation().add(0, 10, 0);
+
                         Firework firework = (Firework) player.getWorld()
-                                .spawnEntity(player.getEyeLocation(), EntityType.FIREWORK);
+                                .spawnEntity(fireworkLocation, EntityType.FIREWORK);
 
                         FireworkEffect fireworkEffect = FireworkEffect.builder()
                                 .trail(true)

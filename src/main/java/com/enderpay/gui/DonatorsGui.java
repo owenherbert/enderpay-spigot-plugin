@@ -6,7 +6,6 @@ import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,19 +17,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class DonatorsGui extends BaseGui implements Listener {
 
     private final int backSlotIndex;
+    private final String playerUsername;
 
-    public DonatorsGui() {
+    public DonatorsGui(String playerUsername) {
 
         Enderpay.getPlugin().getServer().getPluginManager().registerEvents(this, Enderpay.getPlugin());
 
         this.backSlotIndex = 17;
+        this.playerUsername = playerUsername;
 
         inventory = Bukkit.createInventory(null, 18, Enderpay.getStore().getName() + " » Top Donators");
 
-        fillItems(18);
+        fillItems(18, playerUsername);
     }
 
-    private void fillItems(int totalSlots) {
+    private void fillItems(int totalSlots, String playerUsername) {
 
         // add player skulls to the GUI
         for (int i = 0; i < 3; i++) {
@@ -48,9 +49,11 @@ public class DonatorsGui extends BaseGui implements Listener {
 
                         SkullUtils.applySkin(itemStack.getItemMeta(), Enderpay.getFirstPlaceDonatorUuid());
 
+                        Float amount = Float.parseFloat(Enderpay.getFirstPlaceDonatorAmount()) * Enderpay.getPlayerStoreCurrency(playerUsername).getRate();
+
                         meta.setDisplayName(
                                 ChatColor.WHITE + Enderpay.getFirstPlaceDonatorUsername() + ChatColor.GRAY + " (" +
-                                        ChatColor.LIGHT_PURPLE + Enderpay.getCurrency().getSymbol() + Enderpay.getFirstPlaceDonatorAmount() + " " + Enderpay.getCurrency().getIso4217() + ChatColor.GRAY + ")");
+                                        ChatColor.LIGHT_PURPLE + Enderpay.getBaseCurrency().getSymbol() + String.format("%.2f", amount) + " " + Enderpay.getPlayerStoreCurrency(playerUsername).getIso4217() + ChatColor.GRAY + ")");
 
                         isNonExistant = false;
                         break;
@@ -62,9 +65,11 @@ public class DonatorsGui extends BaseGui implements Listener {
 
                         SkullUtils.applySkin(itemStack.getItemMeta(), Enderpay.getSecondPlaceDonatorUuid());
 
+                        Float amount = Float.parseFloat(Enderpay.getSecondPlaceDonatorAmount()) * Enderpay.getPlayerStoreCurrency(playerUsername).getRate();
+
                         meta.setDisplayName(
                                 ChatColor.WHITE + Enderpay.getSecondPlaceDonatorUsername() + ChatColor.GRAY + " (" +
-                                        ChatColor.LIGHT_PURPLE + Enderpay.getCurrency().getSymbol() + Enderpay.getSecondPlaceDonatorAmount() + " " + Enderpay.getCurrency().getIso4217() + ChatColor.GRAY + ")");
+                                        ChatColor.LIGHT_PURPLE + Enderpay.getBaseCurrency().getSymbol() + String.format("%.2f", amount) + " " + Enderpay.getPlayerStoreCurrency(playerUsername).getIso4217() + ChatColor.GRAY + ")");
 
                         isNonExistant = false;
                         break;
@@ -76,9 +81,11 @@ public class DonatorsGui extends BaseGui implements Listener {
 
                         SkullUtils.applySkin(itemStack.getItemMeta(), Enderpay.getThirdPlaceDonatorUuid());
 
+                        Float amount = Float.parseFloat(Enderpay.getThirdPlaceDonatorAmount()) * Enderpay.getPlayerStoreCurrency(playerUsername).getRate();
+
                         meta.setDisplayName(
                                 ChatColor.WHITE + Enderpay.getThirdPlaceDonatorUsername() + ChatColor.GRAY + " (" +
-                                        ChatColor.LIGHT_PURPLE + Enderpay.getCurrency().getSymbol() + Enderpay.getThirdPlaceDonatorAmount() + " " + Enderpay.getCurrency().getIso4217() + ChatColor.GRAY + ")");
+                                        ChatColor.LIGHT_PURPLE + Enderpay.getBaseCurrency().getSymbol() + String.format("%.2f", amount) + " " + Enderpay.getPlayerStoreCurrency(playerUsername).getIso4217() + ChatColor.GRAY + ")");
 
                         isNonExistant = false;
                         break;
@@ -122,7 +129,8 @@ public class DonatorsGui extends BaseGui implements Listener {
             XSound.play(player, "CHICKEN_EGG_POP");
 
             if (slotIndex == backSlotIndex) {
-                Enderpay.getHomeGui().openInventory(player);
+                HomeGui homeGui = new HomeGui();
+                homeGui.openInventory(player);
             }
         }
     }

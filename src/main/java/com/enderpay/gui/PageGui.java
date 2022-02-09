@@ -99,7 +99,8 @@ public final class PageGui extends BaseGui implements Listener {
 
             // show the home GUI to the player
             if (slotIndex == backSlotIndex) {
-                Enderpay.getHomeGui().openInventory(player);
+               HomeGui homeGui = new HomeGui();
+               homeGui.openInventory(player);
                 return;
             }
 

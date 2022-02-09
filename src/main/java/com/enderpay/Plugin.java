@@ -2,6 +2,7 @@ package com.enderpay;
 
 import com.enderpay.api.EnderpayApi;
 import com.enderpay.commands.*;
+import com.enderpay.utils.WebSocket;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,6 +10,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public final class Plugin extends JavaPlugin {
 
@@ -59,10 +63,13 @@ public final class Plugin extends JavaPlugin {
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         Enderpay.setPermissions(rsp.getProvider());
 
+        // start socket connection
+        Enderpay.initWebSocket();
+
         // set scheduler
         this.getServer().getScheduler().cancelTasks(this);
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::buildModelsAndGuis, 0, 4800); // 4 minutes
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::checkForNewCommands, 0, 4800); // 4 minutes
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::checkForNewCommands, 0, 19200); // 16 minutes
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::uploadPlayers, 0, 4800); // 4 minutes
 
         Enderpay.setPlugin(this);

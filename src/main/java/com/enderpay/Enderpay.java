@@ -5,6 +5,7 @@ import com.enderpay.model.Package;
 import com.enderpay.model.*;
 import com.enderpay.papi.EnderpayExpansion;
 import com.enderpay.utils.UuidConverter;
+import com.enderpay.utils.WebSocket;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -37,6 +40,7 @@ public class Enderpay {
     private static ArrayList<Currency> currencies; // an array list of available currencies;
     private static Store store; // the store model
     private static Currency baseCurrency; // the base currency model
+    private static int serverId; // the ID of the authenticated server
 
     // donator usernames
     private static String latestDonatorUsername = DEFAULT_PLACEHOLDER; // the username of the latest donator
@@ -57,6 +61,18 @@ public class Enderpay {
     private static String dayDonatorAmount = DEFAULT_PLACEHOLDER;
     private static String weekDonatorAmount = DEFAULT_PLACEHOLDER;
     private static String monthDonatorAmount = DEFAULT_PLACEHOLDER;
+
+    private static WebSocket webSocket;
+
+    public static void initWebSocket() {
+        try {
+            webSocket = new WebSocket(new URI(WebSocket.ENDPOINT));
+            webSocket.connect();
+
+        } catch (URISyntaxException exception) {
+            MessageBroadcaster.toConsole("Could not connect to Enderpay websocket!");
+        }
+    }
 
     public static ArrayList<Package> getPackagesWithCategoryId(int categoryId) {
 
@@ -228,6 +244,9 @@ public class Enderpay {
 
         // make request to store data endpoint
         enderpayApi.makeRequestAsync(EnderpayApi.ENDPOINT_PLUGIN_STORE_GET, EnderpayApi.METHOD_GET, null, jsonObject -> {
+
+
+            serverId = jsonObject.getJSONObject("data").getInt("serverId");
 
             // set store
             JSONObject storeJsonData = jsonObject.getJSONObject("data").getJSONObject("store");
@@ -663,6 +682,14 @@ public class Enderpay {
 
     public static void setPlayerNameCurrencyHashMap(HashMap<String, Currency> playerNameCurrencyHashMap) {
         Enderpay.playerNameCurrencyHashMap = playerNameCurrencyHashMap;
+    }
+
+    public static int getServerId() {
+        return serverId;
+    }
+
+    public static void setServerId(int serverId) {
+        Enderpay.serverId = serverId;
     }
 
     public static Currency getPlayerStoreCurrency(String playerUsername) {

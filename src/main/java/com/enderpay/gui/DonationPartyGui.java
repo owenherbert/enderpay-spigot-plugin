@@ -1,6 +1,7 @@
 package com.enderpay.gui;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
 import com.enderpay.model.DonationParty;
 import com.enderpay.utils.DateTimeHelper;
@@ -91,6 +92,8 @@ public class DonationPartyGui extends BaseGui implements Listener {
             int slotIndex = event.getRawSlot();
 
             final Player player = (Player) event.getWhoClicked();
+
+            XSound.play(player, "CHICKEN_EGG_POP");
 
             if (slotIndex == backSlotIndex) {
                 HomeGui homeGui = new HomeGui();

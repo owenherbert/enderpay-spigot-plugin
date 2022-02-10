@@ -34,9 +34,9 @@ public class DonationPartyGui extends BaseGui implements Listener {
 
         String inventoryName = Enderpay.getStore().getName() + " » " + "Donation Parties";
 
-        inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
+        super.inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
 
-        inventory.clear();
+        super.inventory.clear();
 
         fillItems(totalSlots);
 
@@ -60,7 +60,7 @@ public class DonationPartyGui extends BaseGui implements Listener {
                     "&dEnds: &f" + DateTimeHelper.timeUntil(donationParty.getEndsAtIso8601())
             );
 
-            inventory.addItem(itemStack);
+            super.inventory.addItem(itemStack);
 
         }
 
@@ -69,12 +69,12 @@ public class DonationPartyGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1;
 
-            inventory.setItem(itemIndex, makeGlassGuiItem());
+            super.inventory.setItem(itemIndex, makeGlassGuiItem());
 
         }
 
         // add back menu item to the GUI
-        inventory.setItem(backSlotIndex, makeBackGuiItem());
+        super.inventory.setItem(backSlotIndex, makeBackGuiItem());
     }
 
     @EventHandler

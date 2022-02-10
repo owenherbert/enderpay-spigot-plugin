@@ -26,7 +26,7 @@ public class DonatorsGui extends BaseGui implements Listener {
         this.backSlotIndex = 17;
         this.playerUsername = playerUsername;
 
-        inventory = Bukkit.createInventory(null, 18, Enderpay.getStore().getName() + " » Top Donators");
+        super.inventory = Bukkit.createInventory(null, 18, Enderpay.getStore().getName() + " » Top Donators");
 
         fillItems(18, playerUsername);
     }
@@ -88,7 +88,7 @@ public class DonatorsGui extends BaseGui implements Listener {
 
             if (!isNonExistant) {
                 itemStack.setItemMeta(meta);
-                inventory.setItem(i, itemStack);
+                super.inventory.setItem(i, itemStack);
             }
         }
 
@@ -97,12 +97,12 @@ public class DonatorsGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
 
-            inventory.setItem(itemIndex, makeGlassGuiItem());
+            super.inventory.setItem(itemIndex, makeGlassGuiItem());
 
         }
 
         // add back menu item to the GUI
-        inventory.setItem(backSlotIndex, makeBackGuiItem());
+        super.inventory.setItem(backSlotIndex, makeBackGuiItem());
     }
 
     @EventHandler

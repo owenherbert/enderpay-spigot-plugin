@@ -35,7 +35,7 @@ public final class HomeGui extends BaseGui implements Listener {
         this.pagesSlotIndex = totalSlots - 2;
         this.donatorsSlotIndex = totalSlots - 1;
 
-        inventory = Bukkit.createInventory(null, totalSlots, Enderpay.getStore().getName());
+        super.inventory = Bukkit.createInventory(null, totalSlots, Enderpay.getStore().getName());
 
         fillItems(totalSlots);
 
@@ -62,7 +62,7 @@ public final class HomeGui extends BaseGui implements Listener {
                     category.getItemDescription().getLore()
             );
 
-            inventory.addItem(itemStack);
+            super.inventory.addItem(itemStack);
 
         }
 
@@ -71,12 +71,12 @@ public final class HomeGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
 
-            inventory.setItem(itemIndex, makeGlassGuiItem());
+            super.inventory.setItem(itemIndex, makeGlassGuiItem());
 
         }
 
         // add pages menu item to the GUI
-        inventory.setItem(pagesSlotIndex, createGuiItem(
+        super.inventory.setItem(pagesSlotIndex, createGuiItem(
                 Material.PAPER,
                 "&fPages",
                 1,
@@ -88,7 +88,7 @@ public final class HomeGui extends BaseGui implements Listener {
         ));
 
         // add donators menu item to the GUI
-        inventory.setItem(donatorsSlotIndex, createGuiItem(
+        super.inventory.setItem(donatorsSlotIndex, createGuiItem(
                 XMaterial.ENDER_EYE.parseMaterial(),
                 "&fTop Donators",
                 1,
@@ -100,7 +100,7 @@ public final class HomeGui extends BaseGui implements Listener {
         ));
 
         // add donation parties menu item to the GUI
-        inventory.setItem(donationPartiesSlotIndex, createGuiItem(
+        super.inventory.setItem(donationPartiesSlotIndex, createGuiItem(
                 XMaterial.FIREWORK_ROCKET.parseMaterial(),
                 "&fDonation Parties",
                 1,
@@ -112,7 +112,7 @@ public final class HomeGui extends BaseGui implements Listener {
         ));
 
         // add currency selector menu item to the GUI
-        inventory.setItem(currenciesSlotIndex, createGuiItem(
+        super.inventory.setItem(currenciesSlotIndex, createGuiItem(
                 XMaterial.GOLD_INGOT.parseMaterial(),
                 "&fCurrency Selector",
                 1,

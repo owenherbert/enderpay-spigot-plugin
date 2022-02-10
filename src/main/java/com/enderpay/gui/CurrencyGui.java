@@ -57,7 +57,7 @@ public class CurrencyGui extends BaseGui implements Listener {
                     "&8Click on this item to change the",
                     "&8store currency to &d" + currency.getIso4217() + "&8!");
 
-            this.inventory.addItem(itemStack);
+            super.inventory.addItem(itemStack);
 
         }
 
@@ -66,12 +66,12 @@ public class CurrencyGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1;
 
-            inventory.setItem(itemIndex, makeGlassGuiItem());
+            super.inventory.setItem(itemIndex, makeGlassGuiItem());
 
         }
 
         // add back menu item to the GUI
-        inventory.setItem(backSlotIndex, makeBackGuiItem());
+        super.inventory.setItem(backSlotIndex, makeBackGuiItem());
 
     }
 

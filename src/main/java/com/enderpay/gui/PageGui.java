@@ -35,7 +35,7 @@ public final class PageGui extends BaseGui implements Listener {
 
         String inventoryName = Enderpay.getStore().getName() + " » " + "Pages";
 
-        inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
+        super.inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
 
         fillItems(totalSlots);
 
@@ -62,7 +62,7 @@ public final class PageGui extends BaseGui implements Listener {
                     page.getItemDescription().getLore()
             );
 
-            inventory.addItem(itemStack);
+            super.inventory.addItem(itemStack);
         }
 
         // add glass panes to the GUI
@@ -70,12 +70,12 @@ public final class PageGui extends BaseGui implements Listener {
 
             int itemIndex = totalSlots - i - 1 - 1; // convert to index by removing one and leave space for pages item
 
-            inventory.setItem(itemIndex, makeGlassGuiItem());
+            super.inventory.setItem(itemIndex, makeGlassGuiItem());
 
         }
 
         // add back menu item to the GUI
-        inventory.setItem(backSlotIndex, makeBackGuiItem());
+        super.inventory.setItem(backSlotIndex, makeBackGuiItem());
     }
 
     @EventHandler

@@ -1,8 +1,6 @@
 package com.enderpay;
 
-import com.enderpay.api.EnderpayApi;
 import com.enderpay.commands.*;
-import com.enderpay.utils.WebSocket;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -10,9 +8,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public final class Plugin extends JavaPlugin {
 

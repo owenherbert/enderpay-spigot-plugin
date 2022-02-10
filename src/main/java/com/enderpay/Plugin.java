@@ -29,19 +29,6 @@ public final class Plugin extends JavaPlugin {
         fileConfig = new File(this.getDataFolder().getPath(), "config.yml");
         config = YamlConfiguration.loadConfiguration(fileConfig);
 
-        // check api key and secret specified in the config
-        String cfgApiKey = config.getString("api-key");
-        String cfgApiSecret = config.getString("api-secret");
-
-        if (cfgApiKey.length() != 25 || cfgApiSecret.length() != 25) {
-
-            MessageBroadcaster.toConsole("You must enter your correct API details into the Enderpay plugin configuration file. Plugin will now disable.");
-
-            Bukkit.getPluginManager().disablePlugin(this);
-
-            return;
-        }
-
         // setup permissions - Vault is required so the plugin will disable if it is not found
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
 

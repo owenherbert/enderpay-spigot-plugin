@@ -74,6 +74,10 @@ public class Enderpay {
         }
     }
 
+    public static void checkOnWebSocket() {
+        if (webSocket.isClosed()) webSocket.connect();
+    }
+
     public static ArrayList<Package> getPackagesWithCategoryId(int categoryId) {
 
         ArrayList<Package> categoryPackages = new ArrayList<>();

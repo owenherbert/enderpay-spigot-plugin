@@ -47,8 +47,6 @@ public class DonatorsGui extends BaseGui implements Listener {
                     // check that there is a donator and that it is not N/A
                     if (!Enderpay.getFirstPlaceDonatorUsername().equals(Enderpay.DEFAULT_PLACEHOLDER)) {
 
-                        SkullUtils.applySkin(itemStack.getItemMeta(), Enderpay.getFirstPlaceDonatorUuid());
-
                         Float amount = Float.parseFloat(Enderpay.getFirstPlaceDonatorAmount()) * Enderpay.getPlayerStoreCurrency(playerUsername).getRate();
 
                         meta.setDisplayName(
@@ -63,8 +61,6 @@ public class DonatorsGui extends BaseGui implements Listener {
                     // check that there is a donator and that it is not N/A
                     if (!Enderpay.getSecondPlaceDonatorUsername().equals(Enderpay.DEFAULT_PLACEHOLDER)) {
 
-                        SkullUtils.applySkin(itemStack.getItemMeta(), Enderpay.getSecondPlaceDonatorUuid());
-
                         Float amount = Float.parseFloat(Enderpay.getSecondPlaceDonatorAmount()) * Enderpay.getPlayerStoreCurrency(playerUsername).getRate();
 
                         meta.setDisplayName(
@@ -78,8 +74,6 @@ public class DonatorsGui extends BaseGui implements Listener {
 
                     // check that there is a donator and that it is not N/A
                     if (!Enderpay.getThirdPlaceDonatorUsername().equals(Enderpay.DEFAULT_PLACEHOLDER)) {
-
-                        SkullUtils.applySkin(itemStack.getItemMeta(), Enderpay.getThirdPlaceDonatorUuid());
 
                         Float amount = Float.parseFloat(Enderpay.getThirdPlaceDonatorAmount()) * Enderpay.getPlayerStoreCurrency(playerUsername).getRate();
 

@@ -160,9 +160,18 @@ public final class HomeGui extends BaseGui implements Listener {
 
             if (slotIndex == donatorsSlotIndex) {
 
-                DonatorsGui donatorsGui = new DonatorsGui(player.getName());
-                donatorsGui.openInventory(player);
-                return;
+                if (Enderpay.getFirstPlaceDonatorUsername() != null) {
+                    DonatorsGui donatorsGui = new DonatorsGui(player.getName());
+                    donatorsGui.openInventory(player);
+                    return;
+                }
+
+                player.closeInventory();
+                player.sendMessage("");
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + Enderpay.getStore().getName());
+                player.sendMessage("");
+                player.sendMessage(ChatColor.GRAY + "There are no donators to display!");
+                player.sendMessage("");
 
             }
 

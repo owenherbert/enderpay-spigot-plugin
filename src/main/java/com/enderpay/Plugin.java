@@ -51,7 +51,7 @@ public final class Plugin extends JavaPlugin {
         // set scheduler
         this.getServer().getScheduler().cancelTasks(this);
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::buildModelsAndGuis, 0, 4800); // 4 minutes
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::checkForNewCommands, 0, 19200); // 16 minutes
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::checkForNewCommands, 0, 4800); // 4 minutes
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::uploadPlayers, 0, 4800); // 4 minutes
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, Enderpay::checkOnWebSocket, 4800, 4800); // 4 minute
 

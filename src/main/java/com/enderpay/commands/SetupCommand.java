@@ -41,7 +41,7 @@ public class SetupCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.GRAY + "The plugin has been successfully set up. You can see");
                 player.sendMessage(ChatColor.GRAY + "how your menu looks with the command " + ChatColor.LIGHT_PURPLE + "/buy" + ChatColor.GRAY + ". If you make");
                 player.sendMessage(ChatColor.GRAY + "any changes online, be sure to sync the plugin with the");
-                player.sendMessage(ChatColor.GRAY + "command " + ChatColor.LIGHT_PURPLE + "/enderpay sync" + ChatColor.GRAY + ".");
+                player.sendMessage(ChatColor.GRAY + "command " + ChatColor.LIGHT_PURPLE + "/enderpay-sync" + ChatColor.GRAY + ".");
                 player.sendMessage("");
             } else {
                 MessageBroadcaster.toConsole("Plugin has been setup!");

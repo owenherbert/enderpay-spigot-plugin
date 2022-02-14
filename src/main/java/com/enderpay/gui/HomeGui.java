@@ -3,6 +3,7 @@ package com.enderpay.gui;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
+import com.enderpay.config.Config;
 import com.enderpay.model.Category;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -78,7 +79,7 @@ public final class HomeGui extends BaseGui implements Listener {
         // add pages menu item to the GUI
         super.inventory.setItem(pagesSlotIndex, createGuiItem(
                 Material.PAPER,
-                "&fPages",
+                "&f" + Config.getGuiTitlePages(),
                 1,
                 true,
                 true,
@@ -90,7 +91,7 @@ public final class HomeGui extends BaseGui implements Listener {
         // add donators menu item to the GUI
         super.inventory.setItem(donatorsSlotIndex, createGuiItem(
                 XMaterial.ENDER_EYE.parseMaterial(),
-                "&fTop Donators",
+                "&f" + Config.getGuiTitleDonators(),
                 1,
                 true,
                 true,
@@ -102,7 +103,7 @@ public final class HomeGui extends BaseGui implements Listener {
         // add donation parties menu item to the GUI
         super.inventory.setItem(donationPartiesSlotIndex, createGuiItem(
                 XMaterial.FIREWORK_ROCKET.parseMaterial(),
-                "&fDonation Parties",
+                "&f" + Config.getGuiTitleDonationParties(),
                 1,
                 true,
                 true,
@@ -114,7 +115,7 @@ public final class HomeGui extends BaseGui implements Listener {
         // add currency selector menu item to the GUI
         super.inventory.setItem(currenciesSlotIndex, createGuiItem(
                 XMaterial.GOLD_INGOT.parseMaterial(),
-                "&fCurrency Selector",
+                "&f" + Config.getGuiTitleCurrency(),
                 1,
                 true,
                 true,

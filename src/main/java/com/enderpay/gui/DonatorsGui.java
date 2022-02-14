@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
+import com.enderpay.config.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class DonatorsGui extends BaseGui implements Listener {
         this.backSlotIndex = 17;
         this.playerUsername = playerUsername;
 
-        super.inventory = Bukkit.createInventory(null, 18, Enderpay.getStore().getName() + " » Top Donators");
+        super.inventory = Bukkit.createInventory(null, 18, Enderpay.getStore().getName() + " » " + Config.getGuiTitleDonators());
 
         fillItems(18, playerUsername);
     }

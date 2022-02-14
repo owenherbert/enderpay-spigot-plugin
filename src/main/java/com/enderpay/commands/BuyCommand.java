@@ -2,6 +2,8 @@ package com.enderpay.commands;
 
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
+import com.enderpay.Plugin;
+import com.enderpay.config.Config;
 import com.enderpay.gui.HomeGui;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -40,9 +42,8 @@ public class BuyCommand implements CommandExecutor {
                 try {
 
                     // try launch firework if enabled in config
-                    boolean spawnFirework = Enderpay.getPlugin().getConfig().getBoolean("buy-command-firework");
 
-                    if (spawnFirework) {
+                    if (Config.getBuyCommandFireworkEnabled()) {
 
                         // above players head
                         Location fireworkLocation = player.getEyeLocation().add(0, 10, 0);

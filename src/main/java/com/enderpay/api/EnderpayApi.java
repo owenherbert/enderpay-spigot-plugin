@@ -2,6 +2,7 @@ package com.enderpay.api;
 
 import com.enderpay.Enderpay;
 import com.enderpay.MessageBroadcaster;
+import com.enderpay.config.Config;
 import org.bukkit.Bukkit;
 import org.json.JSONObject;
 
@@ -42,8 +43,8 @@ public class EnderpayApi {
 
                 // add headers
                 httpURLConnection.setRequestProperty("Content-Type", "application/json");
-                httpURLConnection.setRequestProperty(HEADER_API_KEY, Enderpay.getPlugin().getConfig().getString("api-key"));
-                httpURLConnection.setRequestProperty(HEADER_API_SECRET, Enderpay.getPlugin().getConfig().getString("api-secret"));
+                httpURLConnection.setRequestProperty(HEADER_API_KEY, Config.getApiKey());
+                httpURLConnection.setRequestProperty(HEADER_API_SECRET, Config.getApiSecret());
                 httpURLConnection.setRequestMethod(method);
 
                 if (method == METHOD_PUT) {
@@ -80,7 +81,7 @@ public class EnderpayApi {
     private static String buildPath(String endpoint) {
 
         // check if debug mode is enabled
-        boolean debugMode = Enderpay.getPlugin().getConfig().getBoolean("debug-mode");
+        boolean debugMode = Config.getDebugModeEnabled();
 
         String domain = debugMode ? "http://api.localtest.me:8000" : API_DOMAIN;
 

@@ -2,4 +2,8 @@ api-key: "INSERT-API-KEY-HERE"
 api-secret: "INSERT-API-SECRET-HERE"
 buy-command: "/buy"
 buy-command-firework: true
+gui-title-currency: "Currency Selector"
+gui-title-donation-parties: "Donation Parties"
+gui-title-donators: "Donators"
+gui-title-pages: "Pages"
 debug-mode: false

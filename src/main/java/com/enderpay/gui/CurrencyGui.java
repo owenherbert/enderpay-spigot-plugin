@@ -3,6 +3,7 @@ package com.enderpay.gui;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
+import com.enderpay.config.Config;
 import com.enderpay.model.Currency;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,7 +33,7 @@ public class CurrencyGui extends BaseGui implements Listener {
 
         this.backSlotIndex = totalSlots - 1;
 
-        String inventoryName = Enderpay.getStore().getName() + " » " + "Currency Selector";
+        String inventoryName = Enderpay.getStore().getName() + " » " + Config.getGuiTitleCurrency();
 
         super.inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
 

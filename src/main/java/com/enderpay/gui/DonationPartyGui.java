@@ -3,6 +3,7 @@ package com.enderpay.gui;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
+import com.enderpay.config.Config;
 import com.enderpay.model.DonationParty;
 import com.enderpay.utils.DateTimeHelper;
 import org.bukkit.Bukkit;
@@ -32,7 +33,7 @@ public class DonationPartyGui extends BaseGui implements Listener {
 
         this.backSlotIndex = totalSlots - 1;
 
-        String inventoryName = Enderpay.getStore().getName() + " » " + "Donation Parties";
+        String inventoryName = Enderpay.getStore().getName() + " » " + Config.getGuiTitleDonationParties();
 
         super.inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
 

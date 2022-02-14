@@ -2,6 +2,7 @@ package com.enderpay.gui;
 
 import com.cryptomorin.xseries.XSound;
 import com.enderpay.Enderpay;
+import com.enderpay.config.Config;
 import com.enderpay.model.Page;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,7 +34,7 @@ public final class PageGui extends BaseGui implements Listener {
 
         this.backSlotIndex = totalSlots - 1;
 
-        String inventoryName = Enderpay.getStore().getName() + " » " + "Pages";
+        String inventoryName = Enderpay.getStore().getName() + " » " + Config.getGuiTitlePages();
 
         super.inventory = Bukkit.createInventory(null, totalSlots, inventoryName);
 
